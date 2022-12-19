@@ -157,8 +157,8 @@ then
 	# remove temp files
 	rm $script/data/chrX.temp* $script/data/chrX.fa
 	# indexes for the chrX modified reference
-	bwa index $script/data/chrX.masked-both.fa
-	java -jar $picard CreateSequenceDictionary -R $script/data/chrX.masked-both.fa -O $script/data/chrX.masked-both.dict
+	bwa index $script/data/chrX.masked-both.fa 2>> $out/07_logs/BWA-index-genome.txt
+	java -jar $picard CreateSequenceDictionary -R $script/data/chrX.masked-both.fa -O $script/data/chrX.masked-both.dict >> $out/07_logs/picard-dictionary.txt 2>&1
 fi
 
 

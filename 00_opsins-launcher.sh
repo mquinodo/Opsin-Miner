@@ -8,7 +8,7 @@ NAS=$here/SYNO/WES/EXOMES
 
 batch=Carmen_opsin
 
-out=$NAS/$batch/11_opsins-v5
+out=$NAS/$batch/11_opsins-v7
 mkdir -p $out
 
 input=$out/$batch.input.tsv
@@ -27,6 +27,6 @@ done
 picard=/usr/local/bin/picard.jar
 gatk=/usr/local/bin/gatk-4.1.4.1/gatk-package-4.1.4.1-local.jar
 
-bash $script/02_opsins-main.sh --script $script --out $out --input $input --picard $picard --gatk $gatk >> $out/log.txt 2>&1
+bash $script/01_opsins-main.sh --script $script --out $out --input $input --picard $picard --gatk $gatk >> $out/log.txt 2>&1
 
 

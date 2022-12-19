@@ -1,12 +1,11 @@
 #!/bin/bash
 
-usage() { echo "## ERROR: Usage: $0 [--genome <hg19|hg38>]  [--paddingOfftarget <0-Inf>]. Exit." 1>&2; exit 1; }
+usage() { echo "## ERROR: Usage: $0 [--script <string>] [--out <string>] [--input <string>] [--picard <string>] [--gatk <string>]. Exit." 1>&2; exit 1; }
 
 nobcftools() { echo "## ERROR: bcftools lower than v1.9 -> Please Update! Exit." 1>&2; exit 1; }
 nobedtools() { echo "## ERROR: bedtools lower than v2.24.0 -> Please Update! Exit." 1>&2; exit 1; }
 noRversion() { echo "## ERROR: R lower than v3.2.0 -> Please Update! Exit." 1>&2; exit 1; }
 nobwa() { echo "## ERROR: BWA not installed -> Please Install! Exit." 1>&2; exit 1; }
-
 
 
 currentver="$(bcftools -v | head -n1 | cut -d" " -f2)"
@@ -173,11 +172,21 @@ do
 	then
 		zcat ${fastq1[$i]} | grep -B1 -A2 -Ff $script/data/chrX.region.grep.fa > $out/00_raw-sequences/${pat}_1.tsv &
 		pid1=$!
-		zcat ${fastq2[$i]} | grep -B1 -A2 -Ff $script/data/chrX.region.grep.fa > $out/00_raw-sequences/${pat}_2.tsv &
-		pid2=$!
+		if [ ! -z "${fastq2[$i]}" ]
+		then
+			zcat ${fastq2[$i]} | grep -B1 -A2 -Ff $script/data/chrX.region.grep.fa > $out/00_raw-sequences/${pat}_2.tsv &
+			pid2=$!
+			wait $pid2
+		fi
 		wait $pid1
-		wait $pid2
-		cat $out/00_raw-sequences/${pat}_1.tsv $out/00_raw-sequences/${pat}_2.tsv > $out/00_raw-sequences/$pat.sel.fastq
+		
+		if [ ! -z "${fastq2[$i]}" ]
+		then
+			cat $out/00_raw-sequences/${pat}_1.tsv $out/00_raw-sequences/${pat}_2.tsv > $out/00_raw-sequences/$pat.sel.fastq
+		else
+			cat $out/00_raw-sequences/${pat}_1.tsv > $out/00_raw-sequences/$pat.sel.fastq
+		fi
+		
 		gzip $out/00_raw-sequences/$pat.sel.fastq
 		rm $out/00_raw-sequences/${pat}_1.tsv $out/00_raw-sequences/${pat}_2.tsv
 

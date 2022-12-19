@@ -8,7 +8,7 @@ This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from
 + BEDTools [[Link](https://bedtools.readthedocs.io/en/latest/content/installation.html)] (>= v2.25.0)
 + R [[Link](https://cran.r-project.org/mirrors.html)] (>= v3.2.0)
 + BWA [[Link](https://sourceforge.net/projects/bio-bwa/files)]
-+ Java in order to run Picard and GATK
++ Java (in order to run Picard and GATK)
 + Picard jar file [[Link](https://github.com/broadinstitute/picard)] (>= v2.23)
 + GATK jar file [[Link](https://github.com/broadinstitute/gatk/releases)] (>= v4.0.0.0)
 
@@ -17,6 +17,7 @@ The tool does not require compilation. It will download reference genome files f
 
 ## Usage
 This tool is made to be run by batch of samples ideally sequenced in the same batch or at least with same capture kit and sequencer. This is required for proper comparison between samples to detect deletions.
+
 The main script 02_opsins-main.sh takes as input a tsv file with three columns: ID, forward FASTQ file and reverse FASTQ file. From these FASTQ files, Opsin-Miner will determine possible deletions, detect pathogenic haplotypes and coding variants.
 It is called with bash:
 ```

@@ -188,7 +188,7 @@ do
 		fi
 		
 		gzip $out/00_raw-sequences/$pat.sel.fastq
-		rm $out/00_raw-sequences/${pat}_1.tsv $out/00_raw-sequences/${pat}_2.tsv
+		rm -f $out/00_raw-sequences/${pat}_1.tsv $out/00_raw-sequences/${pat}_2.tsv
 
 	fi
 

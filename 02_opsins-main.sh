@@ -116,7 +116,7 @@ if [ ! -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa.amb ]
 then
 	echo "Step 0.2: Downloading BWA index (will be done only once)"
 	wget -P $script/data https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/analysisSet/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz
-	tar -xf $script/data/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz
+	tar -xf $script/data/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz -C $script/data/
 	mv $script/data/hg19.p13.plusMT.no_alt_analysis_set/* $script/data/
 	rm -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz
 	rm -rf $script/data/hg19.p13.plusMT.no_alt_analysis_set
@@ -158,7 +158,7 @@ then
 	rm $script/data/chrX.temp* $script/data/chrX.fa
 	# indexes for the chrX modified reference
 	bwa index $script/data/chrX.masked-both.fa
-	java -jar $picard CreateSequenceDictionary R=$script/data/chrX.masked-both.fa O=$script/data/chrX.masked-both.dict
+	java -jar $picard CreateSequenceDictionary -R $script/data/chrX.masked-both.fa -O $script/data/chrX.masked-both.dict
 fi
 
 

@@ -30,7 +30,7 @@ Option  | Value  | Description
 --- | --- | ---
 --script | STRING | Folder where the scripts are (e.g. XYZ/Opsin-Miner-main)
 --out | STRING | Folder for outputs
---input | STRING | Tab-delimited text file with three columns: ID, forward FASTQ file and eventually reverse FASTQ file
+--input | STRING | Tab-delimited text file with 2 or 3 columns: ID, forward FASTQ file and eventually reverse FASTQ file
 --picard | STRING | JAR file to run Picard
 --gatk | STRING | JAR file to run GATK
 

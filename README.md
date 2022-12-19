@@ -18,7 +18,7 @@ The tool does not require compilation. It will download reference genome files f
 ## Usage
 This tool is made to be run by batch of samples ideally sequenced in the same batch or at least with same capture kit and sequencer. This is required for proper comparison between samples to detect deletions.
 
-The main script 02_opsins-main.sh takes as input a tsv file with three columns: ID, forward FASTQ file and reverse FASTQ file. From these FASTQ files, Opsin-Miner will determine possible deletions, detect pathogenic haplotypes and coding variants.
+The main script 02_opsins-main.sh takes as input a tsv file with 2 or 3 columns: ID, forward FASTQ file and reverse FASTQ file (for paired-end). From these FASTQ files, Opsin-Miner will determine possible deletions, detect pathogenic haplotypes and coding variants.
 It is called with bash:
 ```
 bash 02_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --picard picard_jar_location --gatk gatk_jar_location
@@ -26,11 +26,11 @@ bash 02_opsins-main.sh --script script_folder --out output_folder --input input_
 The approximate computation time per sample is few minutes per sample.
 
 #### Required arguments
-Option | Value | Description
+Option  | Value  | Description 
 --- | --- | ---
 --script | STRING | Folder where the scripts are (e.g. XYZ/Opsin-Miner-main)
 --out | STRING | Folder for outputs
---input | STRING | Tab-delimited text file with three columns: ID, forward FASTQ file  and reverse FASTQ file
+--input | STRING | Tab-delimited text file with three columns: ID, forward FASTQ file and eventually reverse FASTQ file
 --picard | STRING | JAR file to run Picard
 --gatk | STRING | JAR file to run GATK
 

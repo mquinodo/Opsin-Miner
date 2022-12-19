@@ -3,11 +3,11 @@ Tool to find coding variants, deletions and pathogenic haplotypes in OPN1LW, OPN
 
 This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from the IOB in Basel, Switzerland. It is presented at XYZ. It was developped on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
 
-## Prerequisites
+## Prerequisites (version recommended)
 + BCFTools [[Link](https://samtools.github.io/bcftools/howtos/install.html)] (>= v1.9)
 + BEDTools [[Link](https://bedtools.readthedocs.io/en/latest/content/installation.html)] (>= v2.25.0)
 + R [[Link](https://cran.r-project.org/mirrors.html)] (>= v3.2.0)
-+ BWA [[Link](https://sourceforge.net/projects/bio-bwa/files)]
++ BWA [[Link](https://sourceforge.net/projects/bio-bwa/files)] (>=0.7.17)
 + Java (in order to run Picard and GATK)
 + Picard jar file [[Link](https://github.com/broadinstitute/picard)] (>= v2.23)
 + GATK jar file [[Link](https://github.com/broadinstitute/gatk/releases)] (>= v4.0.0.0)

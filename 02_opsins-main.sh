@@ -131,7 +131,7 @@ if [ ! -f $ref2 ]
 then
 	echo "Step 0.3: Creating chrX reference with masked OPN1MW, OPN1MW2 and polymorphisms in OPN1LW (will be done only once)"
 	# extract chrX
-	samtools faidx $ref chrX > $script/data/chrX.fa
+	samtools faidx $ref1 chrX > $script/data/chrX.fa
 
 	# mask region with OPN1MW and OPN1MW2
 	bedtools maskfasta -fi $script/data/chrX.fa -bed $script/data/OPN1MWMW2.bed -fo $script/data/chrX.temp.fa

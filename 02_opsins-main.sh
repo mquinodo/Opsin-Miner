@@ -185,7 +185,9 @@ do
 		cat $out/00_raw-sequences/${pat}_1.tsv $out/00_raw-sequences/${pat}_2.tsv > $out/00_raw-sequences/$pat.sel.fastq
 		gzip $out/00_raw-sequences/$pat.sel.fastq
 		rm $out/00_raw-sequences/${pat}_1.tsv $out/00_raw-sequences/${pat}_2.tsv
+
 	fi
+
 done
 
 echo "Step 2: Determining coverage and haplotypes"
@@ -264,8 +266,11 @@ do
 
 		samtools view $out/01_bam/$pat.bam "chrX:153404000-153408000" | wc -l | awk -F"\t" '{print "LCR" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 		samtools view $out/01_bam/$pat.bam "chrX:143653980-143658741" | wc -l | awk -F"\t" '{print "LCR-control" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+
 	fi
+
 	rm -f $out/temp/$pat.*
+	
 done
 
 echo "Step 3: Analysis of rare variants"

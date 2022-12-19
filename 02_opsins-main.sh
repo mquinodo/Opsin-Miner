@@ -107,14 +107,14 @@ mkdir -p $out/temp
 
 if [ ! -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa ]
 then
-	echo "Step 0: Downloading reference genome (will be done only once)"
+	echo "Step 0.1: Downloading reference genome (will be done only once)"
 	wget -P $script/data https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/analysisSet/hg19.p13.plusMT.no_alt_analysis_set.fa.gz
 	gunzip $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa.gz
 fi
 
 if [ ! -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa.amb ]
 then
-	echo "Step 0: Downloading BWA index (will be done only once)"
+	echo "Step 0.2: Downloading BWA index (will be done only once)"
 	wget -P $script/data https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/analysisSet/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz
 	tar -xf $script/data/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz
 	mv $script/data/hg19.p13.plusMT.no_alt_analysis_set/* $script/data/
@@ -126,6 +126,41 @@ fi
 #ref1=$script/data/hg19.p13.plusMT.no_alt_analysis_set.fa
 ref1=/opt/Tools/NGS_big_data/hg19.p13.plusMT.no_alt_analysis_set.fa
 ref2=$script/data/chrX.masked-both.fa
+
+if [ ! -f $ref2 ]
+then
+	echo "Step 0.3: Creating chrX reference with masked OPN1MW, OPN1MW2 and polymorphisms in OPN1LW (will be done only once)"
+	# extract chrX
+	samtools faidx $ref chrX > $script/data/chrX.fa
+
+	# mask region with OPN1MW and OPN1MW2
+	bedtools maskfasta -fi $script/data/chrX.fa -bed $script/data/OPN1MWMW2.bed -fo $script/data/chrX.temp.fa
+
+	# remplace differences by Ns in OPN1LW in exon 3 (9 positions) and same for differenc ein other exons
+	sed 's/CATTTCCTGGGAGAGGTGGCTGGTGGTGTGCAAGCCCTTTGGCAATGTGAGATTTGATGC/CATTTCCTGGGAGAGNTGGNTGGTGGTNTGCAAGCCCTTTGGCAANGTGAGATTTGATGC/g' $script/data/chrX.temp.fa > $script/data/chrX.temp1.fa
+	sed 's/CAAGCTGGCCATCGTGGGCATTGCCTTCTCCTGGATCTGGTCTGCTGTGTGGACAGCCCC/CAAGCTGGCCATCNTNGGCATTGNCTTCTCCTGGNTCTGGNCTGCTGTGTGGACAGCCCC/g' $script/data/chrX.temp1.fa > $script/data/chrX.temp2.fa
+	# exon1
+	sed 's/AGGCCAGTATAAAGCGCCGTGACCCTCAGGTGATGCGCCAGGGCCGGCTGCCGTCGGGGA/NGGCCNGTATAAAGCNCCGTGACCCTCAGGTGANGCNCCAGGGCCGGCTGCCGTCGGGGA/g' $script/data/chrX.temp2.fa > $script/data/chrX.temp3.fa
+	# exon4
+	sed 's/GTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCATCCCACTCGCTATCATCATGCT/GTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCANCCCACTCNNNATCATCNTGCT/g' $script/data/chrX.temp3.fa > $script/data/chrX.temp4.fa
+	# exon5
+	sed 's/CCAGAAGGCAGAGAAGGAAGTGACGCGCATGGTGGTGGTGATGATCTTTGCGTACTGCGT/CCAGAAGGCAGAGAAGGAAGTGACGCGCATGGTGGTGGTGATGNTCNTNGCNTNCTGCNT/g' $script/data/chrX.temp4.fa > $script/data/chrX.temp5.fa
+	sed 's/CTGCTGGGGACCCTACACCTTCTTCGCATGCTTTGCTGCTGCCAACCCTGGTTACGCCTT/CTGCTGGGGACCNTACNCCTTCTTCGCATGCTTTGCTGCTGCCAACCCTGGNTACNCCTT/g' $script/data/chrX.temp5.fa > $script/data/chrX.temp6.fa
+	sed 's/CCACCCTTTGATGGCTGCCCTGCCGGCCTACTTTGCCAAAAGTGCCACTATCTACAACCC/CCACCCTTTGATGGCTGCCCTGCCGGCCTNCTTTGCCAAAAGTGCCACTATCTACAACCC/g' $script/data/chrX.temp6.fa > $script/data/chrX.temp7.fa
+	# exon2
+	sed 's/CCAGATGGGTGTACCACCTCACCAGTGTCTGGATGATCTTTGTGGTCACTGCATCCGTCT/CCAGATGGGTGTACCACCTCACCAGTGTCTGGATGATCTTTGTGGTCANTGCATCCGTCT/g' $script/data/chrX.temp7.fa > $script/data/chrX.temp8.fa
+	sed 's/ACTGGATCCTGGTGAACCTGGCGGTCGCTGACCTAGCAGAGACCGTCATCGCCAGCACTA/ACTGGATCCTGGTGAACCTGGCGGTCGCTGACCTNGCAGAGACCGTCATCGCCAGCACTA/g' $script/data/chrX.temp8.fa > $script/data/chrX.temp9.fa
+	sed 's/TCAGCATTGTGAACCAGGTCTCTGGCTACTTCGTGCTGGGCCACCCTATGTGTGTCCTGG/TCAGCNTTGTGAACCAGGTCTNTGGCTACTTCGTGCTGGGCCACCCTATGTGTGTCCTGG/g' $script/data/chrX.temp9.fa > $script/data/chrX.temp10.fa
+	sed 's/AGGGCTACACCGTCTCCCTGTGTGGTAAGCCAGTCGGGGCCCAGGCTCGGCGGAAACCAC/AGGGCTACACCGTCTCCCTGTGTGGTAAGCCAGTCGGGGCCCAGGCTCNGCGGAAACCAC/g' $script/data/chrX.temp10.fa > $script/data/chrX.temp11.fa
+	sed 's/TCATTCACCCTGCAAGCTCCTCCAGCCACCTCATGATGATCGGGGCCCAGCTGCTCCTGT/TCATTCACCCTGCAAGCNCCTCCNGCNACCTCATGATGATCGGGGCCCAGCTGCTCCTGT/g' $script/data/chrX.temp11.fa > $script/data/chrX.masked-both.fa
+
+	# remove temp files
+	rm $script/data/chrX.temp* $script/data/chrX.fa
+	# indexes for the chrX modified reference
+	bwa index $script/data/chrX.masked-both.fa
+	java -jar $picard CreateSequenceDictionary R=$script/data/chrX.masked-both.fa O=$script/data/chrX.masked-both.dict
+fi
+
 
 IFS=$'\r\n' GLOBIGNORE='*' command eval 'patients=($(cut -f1 $input))'
 IFS=$'\r\n' GLOBIGNORE='*' command eval 'fastq1=($(cut -f2 $input))'

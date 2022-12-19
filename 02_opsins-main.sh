@@ -108,14 +108,14 @@ mkdir -p $out/temp
 if [ ! -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa ]
 then
 	echo "Step 0.1: Downloading reference genome (will be done only once)"
-	wget -P $script/data https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/analysisSet/hg19.p13.plusMT.no_alt_analysis_set.fa.gz
+	wget -q -P $script/data https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/analysisSet/hg19.p13.plusMT.no_alt_analysis_set.fa.gz
 	gunzip $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa.gz
 fi
 
 if [ ! -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa.amb ]
 then
 	echo "Step 0.2: Downloading BWA index (will be done only once)"
-	wget -P $script/data https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/analysisSet/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz
+	wget -q -P $script/data https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/analysisSet/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz
 	tar -xf $script/data/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz -C $script/data/
 	mv $script/data/hg19.p13.plusMT.no_alt_analysis_set/* $script/data/
 	rm -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.bwa_index.tar.gz

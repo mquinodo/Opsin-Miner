@@ -48,9 +48,6 @@ while getopts ":-:" o; do
                 script)
                     script="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
                     ;;
-                NAS)
-                    NAS="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
-                    ;;
                 out)
                     out="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
                     ;;
@@ -75,9 +72,6 @@ done
 shift $((OPTIND-1))
 
 if [ -z "${script}" ]; then
-    usage
-fi
-if [ -z "${NAS}" ]; then
     usage
 fi
 if [ -z "${out}" ]; then
@@ -157,6 +151,7 @@ then
 	# remove temp files
 	rm $script/data/chrX.temp* $script/data/chrX.fa
 	# indexes for the chrX modified reference
+	samtools faidx $script/data/chrX.masked-both.fa
 	bwa index $script/data/chrX.masked-both.fa 2>> $out/07_logs/BWA-index-genome.txt
 	java -jar $picard CreateSequenceDictionary -R $script/data/chrX.masked-both.fa -O $script/data/chrX.masked-both.dict >> $out/07_logs/picard-dictionary.txt 2>&1
 fi
@@ -194,8 +189,10 @@ echo "Step 2: Determining coverage and haplotypes"
 for pat in "${patients[@]}"
 do
 	echo "   Processing sample: $pat"
+
+	file=$out/01_bam/$pat.bam
 	
-	if [ ! -f $out/01_bam/$pat.bam ]
+	if [ ! -f $file ]
 	then
 		# recreate BAM file: align selected reads and then convert SAM to BAM
 		export PATH="$PATH:/usr/local/bin/bwa-0.7.15"

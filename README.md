@@ -1,7 +1,9 @@
 # Opsin-Miner
 Tool to find coding variants, deletions and pathogenic haplotypes in OPN1LW, OPN1MW and OPN1MW2 using exome sequencing data
 
-This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from the IOB in Basel, Switzerland. It is presented at XYZ. It was developped on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
+This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from the IOB in Basel, Switzerland.
+
+It was developped on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
 
 ## Prerequisites (version recommended)
 + BCFTools [[Link](https://samtools.github.io/bcftools/howtos/install.html)] (>= v1.9)

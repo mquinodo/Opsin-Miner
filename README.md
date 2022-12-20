@@ -18,10 +18,10 @@ The tool does not require compilation. It will download reference genome files f
 ## Usage
 This tool is made to be run by batch of samples ideally sequenced in the same batch or at least with same capture kit and sequencer. This is required for proper comparison between samples to detect deletions.
 
-The main script 02_opsins-main.sh takes as input a tsv file with 2 or 3 columns: ID, forward FASTQ file and reverse FASTQ file (for paired-end). From these FASTQ files, Opsin-Miner will determine possible deletions, detect pathogenic haplotypes and coding variants.
+The main script 01_opsins-main.sh takes as input a tsv file with 2 or 3 columns: ID, forward FASTQ file and reverse FASTQ file (for paired-end). From these FASTQ files, Opsin-Miner will determine possible deletions, detect pathogenic haplotypes and coding variants.
 It is called with bash:
 ```
-bash 02_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --picard picard_jar_location --gatk gatk_jar_location
+bash 01_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --picard picard_jar_location --gatk gatk_jar_location
 ```
 The approximate computation time per sample is few minutes per sample.
 

@@ -10,17 +10,9 @@ file4=args[4]
 file5=args[5]
 dir=args[6]
 
-# batch="NOVOGENE_180913"
-# file1=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3/04_coverage/0.coverage-ALL.tsv",sep="")
-# file2=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3/05_haplotypes/0.PROT.all.tsv",sep="")
-# file3=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3/05_haplotypes/0.PROT.pathogenic.tsv",sep="")
-# file4=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3/03_variants/0.variants-rare.tsv",sep="")
-# file5="/home/mquinodo/SYNO/scripts_NGS_analysis/Scripts_WES_analysis/opsins/v4/data/HGVS.RData"
-# out=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3/0.events.tsv",sep="")
-# dir=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3",sep="")
-
 load(file5)
 
+# reading files
 data=read.table(file=file1,header=T,sep="\t",check.names = FALSE)
 haplo=read.table(file=file2)
 haploP=read.table(file=file3)
@@ -39,22 +31,18 @@ for (i in 1:dim(rareVariants)[1]){
 }
 rareVariants=rareVariants[which(rareVariants[,9]!="NA" | nchar(rareVariants[,4])>1 | nchar(rareVariants[,5])>1),]
 
-##
-
+# normalize by chrX and remultiply by mean
 data2=data
-
-# normalize by chrX
 for (i in 2:dim(data2)[2]){
 	data2[3:26,i]=as.numeric(data[3:26,i])/as.numeric(data[2,i])
 }
-
 data3=data2[,2:dim(data2)[2]]
 rownames(data3)=data2[,1]
 for (i in 1:dim(data3)[2]){
 	data3[,i]=as.numeric(data3[,i])*mean(as.numeric(data[2,2:dim(data)[2]]))
 }
 
-
+# extracing coverage info for various exons
 LW=1:dim(data3)[2]
 MWMW2=1:dim(data3)[2]
 MW=1:dim(data3)[2]
@@ -64,13 +52,13 @@ rownames(exons)=c("LCR*","ALL\nexon 3","ALL\nexon 6","OPN1LW\nexon 1","OPN1LW\ne
 namesexons=c("LCR","ALL-exon3","ALLexon-6","OPN1LW-exon1","OPN1LW-exon2","OPN1LW-exon4","OPN1LW-exon5","OPN1MW-exon5","OPN1MW2-exon5","OPN1MW/MW2-exon1","OPN1MW/MW2-exon2","OPN1MW/MW2-exon4")
 exons2=exons
 
+# mean per target without sample with less than 10% of average
 me=data3[,1]
 for (i in 1:dim(data3)[1]){
 	me[i]=mean(as.numeric(data3[i,which(as.numeric(data3[i,])>0.1*mean(as.numeric(data3[i,])))]))
 }
 
 data4=data[,-1]
-
 for (i in 1:dim(data3)[2]){
 	LW[i]=sum(data3[9:16,i])/sum(me[9:16])
 	MWMW2[i]=sum(data3[21:26,i])/sum(me[21:26])
@@ -173,14 +161,11 @@ for (i in 1:dim(data3)[2]){
 
 	for (j in 1:4){
 		if(medi1[j]<20){
-			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#FF9595")
+			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#ffcccc")
 		}
 		if(medi1[j]>=20 & medi1[j]<=100){
-			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#FFC476")
+			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#fde7b5")
 		}
-		# if(medi1[j]>100){
-		# 	rect(j-0.4,-0.05,j+0.4,m*1.01,border=NA,col="palegreen")
-		# }
 	}
 
 	for (j in 0:10){
@@ -206,16 +191,10 @@ for (i in 1:dim(data3)[2]){
 	rect(2.7,0,3.3,MW[i],col=cols[3])
 	rect(3.7,0,4.3,MW2[i],col=cols[4])
 
-	# lines(c(0.7,1.3),c(LW[i],LW[i]),col=1,lwd=4)
-	# lines(c(1.7,2.3),c(MWMW2[i],MWMW2[i]),col=1,lwd=4)
-	# lines(c(2.7,3.3),c(MW[i],MW[i]),col=1,lwd=4)
-	# lines(c(3.7,4.3),c(MW2[i],MW2[i]),col=1,lwd=4)
-
-	#points(c(LW[i],MWMW2[i],MW[i],MW2[i]),col=cols,cex=3,pch=16)
-	if(cols[1]!=4){lines(c(0.7,1.3),c(LW[i],LW[i]),col=cols[1],lwd=6)}
-	if(cols[2]!=4){lines(c(1.7,2.3),c(MWMW2[i],MWMW2[i]),col=cols[2],lwd=6)}
-	if(cols[3]!=4){lines(c(2.7,3.3),c(MW[i],MW[i]),col=cols[3],lwd=6)}
-	if(cols[4]!=4){lines(c(3.7,4.3),c(MW2[i],MW2[i]),col=cols[4],lwd=6)}
+	if(cols[1]!=4 & LW[i]<0.02){lines(c(0.7,1.3),c(LW[i],LW[i]),col=cols[1],lwd=6)}
+	if(cols[2]!=4 & MWMW2[i]<0.02){lines(c(1.7,2.3),c(MWMW2[i],MWMW2[i]),col=cols[2],lwd=6)}
+	if(cols[3]!=4 & MW[i]<0.02){lines(c(2.7,3.3),c(MW[i],MW[i]),col=cols[3],lwd=6)}
+	if(cols[4]!=4 & MW2[i]<0.02){lines(c(3.7,4.3),c(MW2[i],MW2[i]),col=cols[4],lwd=6)}
 
 	points(rep(1,n)+runif(n,-0.2,0.2),LW[-i],pch=16,cex=0.7)
 	points(rep(2,n)+runif(n,-0.2,0.2),MWMW2[-i],pch=16,cex=0.8)
@@ -223,7 +202,9 @@ for (i in 1:dim(data3)[2]){
 	points(rep(4,n)+runif(n,-0.2,0.2),MW2[-i],pch=16,cex=0.8)
 
 	text(4.7,m*0.89,paste("Inferred sex: ",sex[i],sep=""),cex=1.2,adj=0)
-	legend(4.7,m*0.85,c("Very low coverage (<20)","Low coverage (<100)","No deletion","Deletion","Other individuals"),col=c("#FF9595","#FFC476",4,2,1),pch=c(15,15,16,16,16),pt.cex=c(3,3,2,2,1),bg="white",y.intersp=1.5)
+	legend(4.7,m*0.85,c("No deletion","Deletion","Other individuals","Very low coverage (<20)","Low coverage (<100)"),col=c(4,2,1,"#ffcccc","#fde7b5"),pch=c(15,15,16,15,15),pt.cex=c(2,2,1,2,2),bg="white",y.intersp=1.5)
+	#legend(4.7,m*0.85,c("No deletion","Deletion","Other individuals"),col=c(4,2,1),pch=c(15,15,16),pt.cex=c(2,2,1),bg="white",y.intersp=1.5)
+	#legend(4.7,m*0.69,c("Very low coverage (<20)","Low coverage (<100)"),col=c("#ffcccc","#fde7b5"),pch=c(15,15),pt.cex=c(2,2),bg="white",y.intersp=1.5)
 
 	if(LW[i]<0.1 & MWMW2[i]>=0.1){
 		text(4.7,m*0.02,"Potential deletion\nof OPN1LW",adj=0,col=2,cex=1.2)
@@ -326,11 +307,11 @@ for (i in 1:dim(data3)[2]){
 				pa="High"
 			}
 
-			if(mut>10 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			if(mut>10 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score1=score1+1
 			}
 
-			if(mut>10 & mut/(WT+mut)>0.4 & mut/(WT+mut)<0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			if(mut>10 & mut/(WT+mut)>0.4 & mut/(WT+mut)<0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score2=score2+1
 			}
 
@@ -381,9 +362,7 @@ for (i in 1:dim(data3)[2]){
 	text(4.7,m*1,"Inferred phenotype: ",cex=1.5,adj=0)
 	text(4.7,m*0.95,pheno,cex=cexp,adj=0,col=colp)
 
-
 	# exon plot
-
 	beg=12.8
 	par(mgp=c(2.5,0.8,0),mar=c(8.1, 4.1, 4.1, 2.1))
 	m=max(2,exons*1,na.rm=T)
@@ -392,14 +371,11 @@ for (i in 1:dim(data3)[2]){
 	
 	for (j in 1:12){
 		if(medi2[j]<20){
-			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#FF9595")
+			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#ffcccc")
 		}
 		if(medi2[j]>=20 & medi2[j]<=100){
-			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#FFC476")
+			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#fde7b5")
 		}
-		# if(medi2[j]>100){
-		# 	rect(j-0.4,-0.05,j+0.4,m*1.01,border=NA,col="palegreen")
-		# }
 	}
 
 	for (j in 0:10){
@@ -412,14 +388,10 @@ for (i in 1:dim(data3)[2]){
 		if(exons[j,i]<0.1){cols[j]=2}
 	}
 
-
-	#points(exons[,i],col=cols,cex=1.2,pch=16)
 	for (j in 1:12){
-		#lines(c(j-0.3,j+0.3),c(exons[j,i],exons[j,i]),col=cols[j],lwd=4)
 		rect(j-0.3,0,j+0.3,exons[j,i],col=cols[j])
-		if(cols[j]!=4){lines(c(j-0.3,j+0.3),c(exons[j,i],exons[j,i]),col=cols[j],lwd=6)}
+		if(cols[j]!=4 & exons[j,i]<0.02){lines(c(j-0.3,j+0.3),c(exons[j,i],exons[j,i]),col=cols[j],lwd=6)}
 	}
-
 
 	n=dim(exons)[2]-1
 	for (j in 1:12){
@@ -429,9 +401,8 @@ for (i in 1:dim(data3)[2]){
 
 	text(beg,m*0.99,"Inferred sex:",cex=1.2,adj=0)
 	text(beg,m*0.95,sex[i],cex=1,adj=0)
-	#text(beg,m*0.83,"Legend",cex=1.2,adj=0)
-	legend(beg,m*0.91,c("Very low cov. (<20)","Low cov. (<100)","No deletion","Deletion","Other individuals"),col=c("#FF9595","#FFC476",4,2,1),pch=c(15,15,16,16,16),pt.cex=c(3,3,2,2,1),bg="white",y.intersp=1.5)
-
+	#legend(beg,m*0.91,c("Very low cov. (<20)","Low cov. (<100)","No deletion","Deletion","Other individuals"),col=c("#ffcccc","#fde7b5",4,2,1),pch=c(15,15,16,16,16),pt.cex=c(3,3,2,2,1),bg="white",y.intersp=1.5)
+	legend(beg,m*0.91,c("No deletion","Deletion","Other individuals","Very low cov. (<20)","Low cov. (<100)"),col=c(4,2,1,"#ffcccc","#fde7b5"),pch=c(15,15,16,15,15),pt.cex=c(2,2,1,2,2),bg="white",y.intersp=1.5)
 
 	if(min(exons[,i])>0.1){
 		text(beg,m*0.6,"No deletions\ndetected",adj=0,col=1,cex=1.2)
@@ -454,7 +425,7 @@ for (i in 1:dim(data3)[2]){
 			if(medi2[6]+medi2[7]>20 & exons[6,i]+exons[7,i]<0.1){
 				pa="High"
 			}
-			events=rbind(events,c(colnames(data3)[i],sex[i],"Hemi/homozygous deletion",pa,"OPN1MW/MW2 exon 5","NA",exons2[6,i]+exons2[7,i],round(exons[6,i]+exons[7,i],digits=2),"NA"))
+			events=rbind(events,c(colnames(data3)[i],sex[i],"Hemi/homozygous deletion",pa,"OPN1MW/MW2-exon5","NA",exons2[6,i]+exons2[7,i],round(exons[6,i]+exons[7,i],digits=2),"NA"))
 		}
 		for (j in c(6,7)){
 			if(exons[j,i]<0.1){
@@ -477,9 +448,6 @@ if(dim(events)[1]>0){
 }
 
 write.table(events,file=paste(dir,"/0.events.tsv",sep=""),quote=F,row.names=F,sep="\t")
-write.table(phenotype,file=paste(dir,"/0.phenotypes.tsv",sep=""),quote=F,row.names=F,sep="\t")
-
-
-
+write.table(phenotype,file=paste(dir,"/0.phenotypes-all.tsv",sep=""),quote=F,row.names=F,sep="\t")
 
 

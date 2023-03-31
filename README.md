@@ -23,7 +23,7 @@ This tool is made to be run by batch of samples ideally sequenced in the same ba
 The main script 01_opsins-main.sh takes as input a tsv file with 2 or 3 columns: ID, forward FASTQ file and reverse FASTQ file (for paired-end). From these FASTQ files, Opsin-Miner will determine possible deletions, detect pathogenic haplotypes and coding variants.
 It is called with bash:
 ```
-bash 01_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --picard picard_jar_location --gatk gatk_jar_location
+bash 01_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --picard picard.jar --gatk gatk.jar
 ```
 The approximate computation time per sample is few minutes per sample.
 

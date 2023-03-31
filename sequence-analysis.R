@@ -1,17 +1,10 @@
 
-
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 
 file1=args[1]
 file2=args[2]
 file3=args[3]
-
-# batch="CeGat_2021-01"
-# pat="CHbasl0111"
-# file1=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3/temp/",pat,".sequences.tsv",sep="")
-# file2=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3/05_haplotypes/",pat,".haplotypes.tsv",sep="")
-# file3=paste("/home/mquinodo/SYNO/WES/EXOMES/",batch,"/11_opsins-v3/05_haplotypes/",pat,".haplotypesDNA.tsv",sep="")
 
 # read sequences
 data=read.table(file=file1)

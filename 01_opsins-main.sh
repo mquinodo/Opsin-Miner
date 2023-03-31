@@ -97,7 +97,6 @@ mkdir -p $out/06_plots
 mkdir -p $out/07_logs
 mkdir -p $out/temp
 
-
 if [ ! -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa ]
 then
 	echo "Step 0.1: Downloading reference genome (will be done only once)"
@@ -115,7 +114,9 @@ then
 	rm -rf $script/data/hg19.p13.plusMT.no_alt_analysis_set
 fi
 
-#### CHANGE BACK
+#####################
+#### CHANGE BACK ####
+#####################
 #ref1=$script/data/hg19.p13.plusMT.no_alt_analysis_set.fa
 ref1=/opt/Tools/NGS_big_data/hg19.p13.plusMT.no_alt_analysis_set.fa
 ref2=$script/data/chrX.masked-both.fa
@@ -170,11 +171,11 @@ do
 	# greping all sequences
 	if [ ! -f $out/00_raw-sequences/$pat.sel.fastq.gz ]
 	then
-		zcat ${fastq1[$i]} | grep -B1 -A2 -Ff $script/data/chrX.region.grep.fa > $out/00_raw-sequences/${pat}_1.tsv &
+		zcat ${fastq1[$i]} | grep -B1 -A2 -Ff $script/data/region.grep.fa > $out/00_raw-sequences/${pat}_1.tsv &
 		pid1=$!
 		if [ ! -z "${fastq2[$i]}" ]
 		then
-			zcat ${fastq2[$i]} | grep -B1 -A2 -Ff $script/data/chrX.region.grep.fa > $out/00_raw-sequences/${pat}_2.tsv &
+			zcat ${fastq2[$i]} | grep -B1 -A2 -Ff $script/data/region.grep.fa > $out/00_raw-sequences/${pat}_2.tsv &
 			pid2=$!
 			wait $pid2
 		fi
@@ -215,57 +216,55 @@ do
 	if [ ! -f $out/05_haplotypes/$pat.haplotypes.tsv ]
 	then
 		# extract sequences mapping to OPN1 region
-		samtools view $out/01_bam/$pat.bam "chrX:153390252-153510581" | cut -f10 > $out/temp/$pat.test0.tsv
+		samtools view $out/01_bam/$pat.bam "chrX:153390252-153510581" | cut -f10 > $out/temp/$pat.seq.all.tsv
 
 		# exon3 OPN1LW sense based on two regions with changes in haplotypes
-		grep -P "GTGAGATTTGATGCCAAGCTGGCCATC|TGCAAGCCCTTTGGCAA" $out/temp/$pat.test0.tsv > $out/temp/$pat.test2.tsv
+		grep -P "GTGAGATTTGATGCCAAGCTGGCCATC|TGCAAGCCCTTTGGCAA" $out/temp/$pat.seq.all.tsv > $out/temp/$pat.seq.hap-fwd.tsv
 		# exon3 OPN1LW antisense
-		grep -P "GATGGCCAGCTTGGCATCAAATCTCAC|TTGCCAAAGGGCTTGCA" $out/temp/$pat.test0.tsv | tr ACGTacgt TGCAtgca | rev > $out/temp/$pat.test3.tsv
+		grep -P "GATGGCCAGCTTGGCATCAAATCTCAC|TTGCCAAAGGGCTTGCA" $out/temp/$pat.seq.all.tsv | tr ACGTacgt TGCAtgca | rev > $out/temp/$pat.seq.hap-rev.tsv
 		# merge sense and antisense
-		cat $out/temp/$pat.test2.tsv $out/temp/$pat.test3.tsv | sort | uniq > $out/temp/$pat.test4.tsv
+		cat $out/temp/$pat.seq.hap-fwd.tsv $out/temp/$pat.seq.hap-rev.tsv | sort | uniq > $out/temp/$pat.seq.hap-all.tsv
 		# grep sequence that are long enough on both sides, first left and then right
-		grep -P "GTGGCTGGTGGT|ATGGATGGTGGT|GTGGATGGTGGT|ATGGCTGGTGGT" $out/temp/$pat.test4.tsv | grep -P "CTTCTCCTGGATCTGGT|CTTCTCCTGGGTCTGGT|CTTCTCCTGGGTCTGGG|CTTCTCCTGGATCTGGG" > $out/temp/$pat.sequences.tsv
+		grep -P "GTGGCTGGTGGT|ATGGATGGTGGT|GTGGATGGTGGT|ATGGCTGGTGGT" $out/temp/$pat.seq.hap-all.tsv | grep -P "CTTCTCCTGGATCTGGT|CTTCTCCTGGGTCTGGT|CTTCTCCTGGGTCTGGG|CTTCTCCTGGATCTGGG" > $out/temp/$pat.sequences.tsv
 		# R script for sequence alignement and haplotype calling
 		Rscript $script/sequence-analysis.R $out/temp/$pat.sequences.tsv $out/05_haplotypes/$pat.haplotypes.tsv $out/05_haplotypes/$pat.haplotypesDNA.tsv
 		# remove temporary files
-		rm $out/temp/$pat.test2.tsv $out/temp/$pat.test3.tsv $out/temp/$pat.test4.tsv
+		rm $out/temp/$pat.seq.hap*
 	fi
 
 	if [ ! -f $out/04_coverage/$pat.coverage.tsv ]
 	then
 		# look at coverage
-		cat $out/temp/$pat.test0.tsv | tr ACGTacgt TGCAtgca | rev > $out/temp/$pat.test2.tsv
-		cat $out/temp/$pat.test0.tsv $out/temp/$pat.test2.tsv > $out/temp/$pat.test3.tsv
+		cat $out/temp/$pat.seq.all.tsv | tr ACGTacgt TGCAtgca | rev > $out/temp/$pat.seq.all-rev.tsv
+		cat $out/temp/$pat.seq.all.tsv $out/temp/$pat.seq.all-rev.tsv > $out/temp/$pat.seq.all-both.tsv
 
-		grep CACAGGCCAGTATAAAGCGCCGTGAC $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon1-part1" "\t" $1}' > $out/04_coverage/$pat.coverage.tsv
-		grep CACTGGCCGGTATAAAGCACCGTGAC $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon1-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep CTCAGGTGATGCGCCAGGGCCGGCT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon1-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep CTCAGGTGACGCACCAGGGCCGGCT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon1-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep CACAGGCCAGTATAAAGCGCCGTGAC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon1-part1" "\t" $1}' > $out/04_coverage/$pat.coverage.tsv
+		grep CACTGGCCGGTATAAAGCACCGTGAC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon1-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep CTCAGGTGATGCGCCAGGGCCGGCT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon1-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep CTCAGGTGACGCACCAGGGCCGGCT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon1-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
-		grep GATGATCTTTGTGGTCACTGCATCCGTC $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon2-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep GATGATCTTTGTGGTCATTGCATCCGTC $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon2-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep GTGAACCAGGTCTCTGGCTACTTCGTGCTGGG $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon2-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep GTGAACCAGGTCTATGGCTACTTCGTGCTGGG $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon2-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep GATGATCTTTGTGGTCACTGCATCCGTC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon2-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep GATGATCTTTGTGGTCATTGCATCCGTC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon2-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep GTGAACCAGGTCTCTGGCTACTTCGTGCTGGG $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon2-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep GTGAACCAGGTCTATGGCTACTTCGTGCTGGG $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon2-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
-		grep GTGAGATTTGATGCCAAGCTGGCCATC $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1-exon3-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep TGTGTGGACAGCCCCGCCCATCTTTGGTTGGAGCAG $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1-exon3-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep GTGAGATTTGATGCCAAGCTGGCCATC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1-exon3-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep TGTGTGGACAGCCCCGCCCATCTTTGGTTGGAGCAG $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1-exon3-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
-		grep CCTGCTGCATCATCCCACTCGCT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon4-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep CCTGCTGCATCACCCCACTCAGC $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon4-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep GCTATCATCATGCTCTGCTACCT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon4-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep AGCATCATCGTGCTCTGCTACCT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon4-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		#grep GAAGACTTCATGCGGCCCAGACGT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "ALL-exon4-WT" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		#grep GAAGACTTCACGCGGCCCAGACGT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "ALL-exon4-C203R" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep CCTGCTGCATCATCCCACTCGCT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon4-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep CCTGCTGCATCACCCCACTCAGC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon4-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep GCTATCATCATGCTCTGCTACCT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon4-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep AGCATCATCGTGCTCTGCTACCT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MWMW2-exon4-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
-		grep TACTGCGTCTGCTGGGGACCC $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon5-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep TTCTGCTTCTGCTGGGGACCA $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MW-exon5-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep TTCTGCTTCTGCTGGGGACCC $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MW2-exon5-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep CTACACCTTCTTCGCATGCTT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon5-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep ATACGCCTTCTTCGCATGCTT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MW-exon5-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep CTACGCCTTCTTCGCATGCTT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1MW2-exon5-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep TACTGCGTCTGCTGGGGACCC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon5-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep TTCTGCTTCTGCTGGGGACCA $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MW-exon5-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep TTCTGCTTCTGCTGGGGACCC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MW2-exon5-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep CTACACCTTCTTCGCATGCTT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1LW-exon5-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep ATACGCCTTCTTCGCATGCTT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MW-exon5-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep CTACGCCTTCTTCGCATGCTT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1MW2-exon5-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
-		grep GAAACTGCATCTTGCAGCTTT $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1-exon6-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		grep AGGTCTCATCTGTGTCCTCGG $out/temp/$pat.test3.tsv | wc -l | awk -F"\t" '{print "OPN1-exon6-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep GAAACTGCATCTTGCAGCTTT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1-exon6-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		grep AGGTCTCATCTGTGTCCTCGG $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1-exon6-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
 		samtools view $out/01_bam/$pat.bam "chrX:106869654-106896256" | wc -l | awk -F"\t" '{print "Control-chrX-PRPS1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 		samtools view $out/01_bam/$pat.bam "chr1:150291917-150327704" | wc -l | awk -F"\t" '{print "Control-autosome-PRPF3" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
@@ -286,22 +285,22 @@ do
 	if [ ! -f $out/03_variants/$pat.variants.tsv ]
 	then
 		# take reads from BAM (OPN1 region) and create FASTQs
-		samtools view -b -h $out/01_bam/$pat.bam "chrX:153390252-153510581" > $out/temp/$pat.2.bam
-		samtools index $out/temp/$pat.2.bam
-		samtools sort $out/temp/$pat.2.bam > $out/temp/$pat.sorted.bam
-		samtools index $out/temp/$pat.sorted.bam
-		bedtools bamtofastq -i $out/temp/$pat.sorted.bam -fq $out/temp/$pat.fastq
+		samtools view -b -h $out/01_bam/$pat.bam "chrX:153390252-153510581" > $out/temp/$pat.region.bam
+		samtools index $out/temp/$pat.region.bam
+		samtools sort $out/temp/$pat.region.bam > $out/temp/$pat.region.sorted.bam
+		samtools index $out/temp/$pat.region.sorted.bam
+		bedtools bamtofastq -i $out/temp/$pat.region.sorted.bam -fq $out/temp/$pat.region.fastq
 
 		# alignement, sam to bam and indexing
 		export PATH="$PATH:/usr/local/bin/bwa-0.7.15"
 		RG=$(echo "@RG\tID:$pat\tSM:$pat\tPL:Illumina")
-		bwa mem -M -C -t 32 -R $RG $ref2 $out/temp/$pat.fastq > $out/temp/$pat.sam 2>> $out/07_logs/BWA-region.txt
-		java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.sam -O $out/temp/$pat.3.bam -TMP_DIR $out/temp 2>> $out/07_logs/picard-region.txt
-		samtools index $out/temp/$pat.3.bam
+		bwa mem -M -C -t 32 -R $RG $ref2 $out/temp/$pat.region.fastq > $out/temp/$pat.region.sam 2>> $out/07_logs/BWA-region.txt
+		java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.region.sam -O $out/temp/$pat.region2.bam -TMP_DIR $out/temp 2>> $out/07_logs/picard-region.txt
+		samtools index $out/temp/$pat.region2.bam
 
 		# variant calling
 		java -jar $gatk HaplotypeCaller \
-		-I $out/temp/$pat.3.bam \
+		-I $out/temp/$pat.region2.bam \
 		-R $ref2 \
 		-O $out/temp/$pat.vcf \
 		-G StandardAnnotation \
@@ -351,7 +350,7 @@ sort -k1,1 $out/temp/data.tsv > $out/temp/data2.tsv
 cat $out/temp/header.tsv $out/temp/data2.tsv > $out/04_coverage/0.coverage-ALL.tsv
 
 echo "Step 5: Creating plots and events files"
-Rscript $script/plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.PROT.all.tsv $out/05_haplotypes/0.PROT.pathogenic.tsv $out/03_variants/0.variants-all.tsv $script/data/HGVS-gnomAD.RData $out/0.events.tsv $out
+Rscript $script/plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.PROT.all.tsv $out/05_haplotypes/0.PROT.pathogenic.tsv $out/03_variants/0.variants-all.tsv $script/data/HGVS-gnomAD.RData $out
 
 rm -rf $out/temp
 

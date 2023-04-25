@@ -114,11 +114,7 @@ then
 	rm -rf $script/data/hg19.p13.plusMT.no_alt_analysis_set
 fi
 
-#####################
-#### CHANGE BACK ####
-#####################
-#ref1=$script/data/hg19.p13.plusMT.no_alt_analysis_set.fa
-ref1=/opt/Tools/NGS_big_data/hg19.p13.plusMT.no_alt_analysis_set.fa
+ref1=$script/data/hg19.p13.plusMT.no_alt_analysis_set.fa
 ref2=$script/data/chrX.masked-both.fa
 
 if [ ! -f $ref2 ]
@@ -323,14 +319,14 @@ echo -e "ID\tchr\tpos\tref\talt\treads-ref\treads-alt\tchange" > $out/03_variant
 cat $out/03_variants/*.variants.tsv >> $out/03_variants/0.variants-all.tsv
 
 # extract pathogenic and rare haplotypes
-grep -P "A|I|V|S" $out/05_haplotypes/*.haplotypes.tsv | awk -F"\t" '{split($1,a,":"); split(a[1],b,"/"); split(b[10],c,"."); print c[1] "\t" a[2] "\t" $2}' > $out/05_haplotypes/0.PROT.all.tsv
+grep -P "A|I|V|S" $out/05_haplotypes/*.haplotypes.tsv | awk -F"\t" '{split($1,a,":"); n=split(a[1],b,"/"); split(b[n],c,"."); print c[1] "\t" a[2] "\t" $2}' > $out/05_haplotypes/0.PROT.all.tsv
 grep -P "LIAVA|LVAVA|MIAVA|LIAVS|LIVVA" $out/05_haplotypes/0.PROT.all.tsv > $out/05_haplotypes/0.PROT.pathogenic.tsv
 echo -e "NA\tNA\t0" >> $out/05_haplotypes/0.PROT.pathogenic.tsv
 cat $out/05_haplotypes/*.haplotypes.tsv | cut -f1 | sort | uniq -c | gawk '$1<=4{print $2}' > $out/temp/0.PROT.temp.tsv
 grep -Ff $out/temp/0.PROT.temp.tsv $out/05_haplotypes/0.PROT.all.tsv | awk -F"\t" '{if($3>4) print $0}' > $out/05_haplotypes/0.PROT.rare.tsv
 
 # extract rare DNA haplotypes
-grep -P "T|C|G" $out/05_haplotypes/*.haplotypesDNA.tsv | awk -F"\t" '{split($1,a,":"); split(a[1],b,"/"); split(b[10],c,"."); print c[1] "\t" a[2] "\t" $2}' > $out/05_haplotypes/0.DNA.all.tsv
+grep -P "T|C|G" $out/05_haplotypes/*.haplotypesDNA.tsv | awk -F"\t" '{split($1,a,":"); n=split(a[1],b,"/"); split(b[n],c,"."); print c[1] "\t" a[2] "\t" $2}' > $out/05_haplotypes/0.DNA.all.tsv
 cat $out/05_haplotypes/*.haplotypesDNA.tsv | cut -f1 | sort | uniq -c | gawk '$1<=4{print $2}' > $out/temp/0.DNA.temp.tsv
 grep -Ff $out/temp/0.DNA.temp.tsv $out/05_haplotypes/0.DNA.all.tsv | awk -F"\t" '{if($3>4) print $0}' > $out/05_haplotypes/0.DNA.rare.tsv
 

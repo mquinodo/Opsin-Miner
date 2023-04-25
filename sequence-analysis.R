@@ -13,7 +13,7 @@ data=read.table(file=file1)
 m=max(apply(data,1,nchar))
 a=matrix(nrow=dim(data)[1],ncol=m)
 for (i in 1:dim(data)[1]){
-	temp=strsplit(data[i,1],"")[[1]]
+	temp=strsplit(as.character(data[i,1]),"")[[1]]
 	a[i,1:length(temp)]=temp
 }
 

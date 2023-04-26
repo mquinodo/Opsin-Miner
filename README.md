@@ -36,3 +36,12 @@ Option  | Value  | Description
 --picard | STRING | JAR file to run Picard
 --gatk | STRING | JAR file to run GATK
 
+## Outputs
+The main output files are:
++ file1
++ file2
+
+The other output files are placed into multiple directories:
++ dir1
++ dir2
+

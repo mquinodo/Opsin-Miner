@@ -38,10 +38,17 @@ Option  | Value  | Description
 
 ## Outputs
 The main output files are:
-+ file1
-+ file2
++ 0.events.tsv: list of detected events which can be rare variants, rare haplotypes
++ 0.phenotypes-all.tsv
++ 0.sex.tsv: inferred sex and Z-score of chrX coverage vs autosome (high = female, low = male)
 
 The other output files are placed into multiple directories:
-+ dir1
-+ dir2
++ 00_raw-sequences: contains the selected sequences for each sample in FASTQ format
++ 01_bam: contains the aligned selected sequences for each sample in BAM format with indexes
++ 02_vcf: detected variants in VCF format for each sample
++ 03_variants: list of variants with information about reads for each sample and overall
++ 04_coverage: coverage for all regions for each sample and overall
++ 05_haplotypes: detected haplotypes (DNA and protein) for each sample and overall
++ 06_plots: plots sumarizing information for each sample as well as Z-score for sex determination
++ 07_logs: logs of BWA, GATK and picard commands used
 

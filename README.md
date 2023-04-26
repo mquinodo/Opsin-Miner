@@ -12,7 +12,7 @@ It was developped on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
 + BWA [[Link](https://sourceforge.net/projects/bio-bwa/files)] (>=0.7.17)
 + Java (in order to run Picard and GATK)
 + Picard jar file [[Link](https://github.com/broadinstitute/picard)] (>= v2.23)
-+ GATK jar file [[Link](https://github.com/broadinstitute/gatk/releases)] (>= v4.0.0.0)
++ GATK jar file [[Link](https://github.com/broadinstitute/gatk/releases)] (>= v4.0.0.0, check compatibility with your version of Java)
 
 ## Installation
 The tool does not require compilation. It will download reference genome files from UCSC during the first run.

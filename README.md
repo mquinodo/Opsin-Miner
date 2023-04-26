@@ -37,7 +37,7 @@ Option  | Value  | Description
 --gatk | STRING | JAR file to run GATK
 
 ## Outputs
-The main output files are:
+The main output files which contain all required information are:
 + 0.events.tsv: list of detected events which can be rare or pathogenic variants, pathogenic haplotypes or deletions.
 + 0.phenotypes-all.tsv: inferred phenotype per sample based on a score computed with detected event as defined in the paragraph.
 + 0.sex.tsv: inferred sex and Z-score of chrX coverage vs autosome (high = female, low = male)
@@ -54,17 +54,17 @@ The other output files are placed into multiple directories:
 
 ## Determination of phenotype
 
-Phenotype is “Blue cone monochromacy / severe” if there is one event:
+Phenotype is defined as “Blue cone monochromacy / severe” if there is one event:
 + Pathogenic haplotype in more of 75% of reads
 + Deletion of one or more exon of all genes (OPN1LW+OPN1MW+OPN1MW2)
 + p.Cys230Arg or LoF variant in more of 75% of reads
 
-Phenotype is “Color blindness” if there is one event:
+Phenotype is defined as “Color blindness” if there is one event:
 + Pathogenic haplotype in 40-75% of reads
 + Deletion of one or more exon in OPN1LW or OPN1MW+MW2
 + p.Cys230Arg or LoF variant in 40-75% of reads
 
-Phenotype is “Color blindness / severe” if there are two events like:
+Phenotype is defined as “Color blindness / severe” if there are two events like:
 + Pathogenic haplotype in 40-75% of reads
 + Deletion of one or more exon in OPN1LW or OPN1MW+MW2
 + p.Cys230Arg or LoF variant in 40-75% of reads

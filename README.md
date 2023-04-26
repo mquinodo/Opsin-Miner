@@ -52,17 +52,17 @@ The other output files are placed into multiple directories:
 + 06_plots: plots sumarizing information for each sample as well as Z-score for sex determination
 + 07_logs: logs of BWA, GATK and picard commands used
 
-## Determination of phenotype and scoring
+## Determination of phenotype
 
 Phenotype is “Blue cone monochromacy / severe” if there is one event:
-+ Pathogenic haplotype in more of 75% of reads (1 point)
++ Pathogenic haplotype in more of 75% of reads
 + Deletion of one or more exon of all genes (OPN1LW+OPN1MW+OPN1MW2)
-+ p.Cys230Arg or LoF variant in more of 75% of reads (1 point)
++ p.Cys230Arg or LoF variant in more of 75% of reads
 
 Phenotype is “Color blindness” if there is one event:
-+ Pathogenic haplotype in 40-75% of reads (0.5 points?)
++ Pathogenic haplotype in 40-75% of reads
 + Deletion of one or more exon in OPN1LW or OPN1MW+MW2
-+ p.Cys230Arg or LoF variant in 40-75% of reads (1 point?)
++ p.Cys230Arg or LoF variant in 40-75% of reads
 
 Phenotype is “Color blindness / severe” if there are two events like:
 + Pathogenic haplotype in 40-75% of reads
@@ -70,5 +70,3 @@ Phenotype is “Color blindness / severe” if there are two events like:
 + p.Cys230Arg or LoF variant in 40-75% of reads
 In this last case, it is impossible to know if the two events are in the same gene or not. Therefore, we cannot differentiate between colour blindness and severe.
 
-The scoring is defined as the sum of events:
-+ 

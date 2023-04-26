@@ -39,7 +39,7 @@ Option  | Value  | Description
 ## Outputs
 The main output files which contain all required information are:
 + 0.events.tsv: list of detected events which can be rare or pathogenic variants, pathogenic haplotypes or deletions.
-+ 0.phenotypes-all.tsv: inferred phenotype per sample based on a score computed with detected event as defined in the paragraph.
++ 0.phenotypes-all.tsv: inferred phenotype per sample based on detected event(s) as defined in the  “Determination of phenotype” paragraph.
 + 0.sex.tsv: inferred sex and Z-score of chrX coverage vs autosome (high = female, low = male)
 
 The other output files are placed into multiple directories:

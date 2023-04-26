@@ -229,7 +229,7 @@ for (i in 1:dim(data3)[2]){
 
 	text(4.7,m*0.56,"Exon 3 haplotypes (>1 reads):",adj=0,cex=1.2)
 	x=haplo[which(haplo[,1]==colnames(data3)[i] & haplo[,3]>1),2:3]
-	x=x[sort(x[,2], index.return=TRUE, decreasing=TRUE)$ix,]
+	x=x[sort(as.numeric(x[,2]), index.return=TRUE, decreasing=TRUE)$ix,]
 	for (j in 1:dim(x)[1]){
 		text(4.7,m*(0.56-(j)*0.035),paste(x[j,1]," (n = ",x[j,2],")",sep=""),adj=0)
 	}
@@ -237,19 +237,19 @@ for (i in 1:dim(data3)[2]){
 	x=haploP[which(haploP[,1]==colnames(data3)[i] & haploP[,3]>1),2:3]
 	if(length(which(haploP[,1]==colnames(data3)[i] & haploP[,3]>1))>0){
 		text(4.7,m*0.32,"Pathogenic haplotypes:",adj=0,cex=1.2,col=2)
-		x=x[sort(x[,2], index.return=TRUE, decreasing=TRUE)$ix,]
+		x=x[sort(as.numeric(x[,2]), index.return=TRUE, decreasing=TRUE)$ix,]
 		for (j in 1:dim(x)[1]){
-			perc=round(x[j,2]/(nreads),digits=2)
+			perc=round(as.numeric(x[j,2])/(nreads),digits=2)
 			text(4.7,m*(0.32-(j)*0.035),paste(x[j,1]," n=",x[j,2],"/",nreads," (",perc*100,"%)",sep=""),adj=0,col=2)
 			pa="Low"
-			if(x[j,1]>10 & perc>0.75){
+			if(as.numeric(x[j,1])>10 & as.numeric(perc)>0.75){
 				pa="High"
 				score1=score1+1
 			}
-			if(x[j,1]>10 & perc<=0.75 & perc>0.4){
+			if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 				score2=score2+0.5
 			}
-			events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic haplotype",pa,x[j,1],x[j,2],nreads-x[j,2],perc,"NA"))
+			events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic haplotype",pa,x[j,1],x[j,2],nreads-as.numeric(x[j,2]),perc,"NA"))
 		}
 	} else {
 		text(4.7,m*0.33,"No pathogenic\nhaplotypes detected",adj=0,cex=1.2,col=1)

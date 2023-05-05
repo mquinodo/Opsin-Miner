@@ -202,9 +202,7 @@ for (i in 1:dim(data3)[2]){
 	points(rep(4,n)+runif(n,-0.2,0.2),MW2[-i],pch=16,cex=0.8)
 
 	text(4.7,m*0.89,paste("Inferred sex: ",sex[i],sep=""),cex=1.2,adj=0)
-	legend(4.7,m*0.85,c("No deletion","Deletion","Other individuals","Very low coverage (<20)","Low coverage (<100)"),col=c(4,2,1,"#ffcccc","#fde7b5"),pch=c(15,15,16,15,15),pt.cex=c(2,2,1,2,2),bg="white",y.intersp=1.5)
-	#legend(4.7,m*0.85,c("No deletion","Deletion","Other individuals"),col=c(4,2,1),pch=c(15,15,16),pt.cex=c(2,2,1),bg="white",y.intersp=1.5)
-	#legend(4.7,m*0.69,c("Very low coverage (<20)","Low coverage (<100)"),col=c("#ffcccc","#fde7b5"),pch=c(15,15),pt.cex=c(2,2),bg="white",y.intersp=1.5)
+	legend(4.7,m*0.85,c("No deletion","Deletion","Other individuals","Very low coverage (<10)","Low coverage (<20)"),col=c(4,2,1,"#ffcccc","#fde7b5"),pch=c(15,15,16,15,15),pt.cex=c(2,2,1,2,2),bg="white",y.intersp=1.5)
 
 	if(LW[i]<0.1 & MWMW2[i]>=0.1){
 		text(4.7,m*0.02,"Potential deletion\nof OPN1LW",adj=0,col=2,cex=1.2)
@@ -227,8 +225,10 @@ for (i in 1:dim(data3)[2]){
 
 	nreads=sum(haplo[which(haplo[,1]==colnames(data3)[i]),3])
 
-	text(4.7,m*0.56,"Exon 3 haplotypes (>1 reads):",adj=0,cex=1.2)
-	x=haplo[which(haplo[,1]==colnames(data3)[i] & haplo[,3]>1),2:3]
+	text(4.7,m*0.56,"Exon 3 haplotypes:",adj=0,cex=1.2)
+	x=haplo[which(haplo[,1]==colnames(data3)[i] & haplo[,3]>0),2:3]
+	#text(4.7,m*0.56,"Exon 3 haplotypes (>1 reads):",adj=0,cex=1.2)
+	#x=haplo[which(haplo[,1]==colnames(data3)[i] & haplo[,3]>1),2:3]
 	x=x[sort(as.numeric(x[,2]), index.return=TRUE, decreasing=TRUE)$ix,]
 	for (j in 1:dim(x)[1]){
 		text(4.7,m*(0.56-(j)*0.035),paste(x[j,1]," (n = ",x[j,2],")",sep=""),adj=0)
@@ -236,17 +236,19 @@ for (i in 1:dim(data3)[2]){
 	
 	x=haploP[which(haploP[,1]==colnames(data3)[i] & haploP[,3]>1),2:3]
 	if(length(which(haploP[,1]==colnames(data3)[i] & haploP[,3]>1))>0){
-		text(4.7,m*0.32,"Pathogenic haplotypes:",adj=0,cex=1.2,col=2)
+		text(4.7,m*0.32,"Pathogenic haplotypes (>1 read):",adj=0,cex=1.2,col=2)
 		x=x[sort(as.numeric(x[,2]), index.return=TRUE, decreasing=TRUE)$ix,]
 		for (j in 1:dim(x)[1]){
 			perc=round(as.numeric(x[j,2])/(nreads),digits=2)
 			text(4.7,m*(0.32-(j)*0.035),paste(x[j,1]," n=",x[j,2],"/",nreads," (",perc*100,"%)",sep=""),adj=0,col=2)
 			pa="Low"
-			if(as.numeric(x[j,1])>10 & as.numeric(perc)>0.75){
+			if(as.numeric(x[j,1])>1 & as.numeric(perc)>0.75){
+			#if(as.numeric(x[j,1])>10 & as.numeric(perc)>0.75){
 				pa="High"
 				score1=score1+1
 			}
-			if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
+			if(as.numeric(x[j,1])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
+			#if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 				score2=score2+0.5
 			}
 			events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic haplotype",pa,x[j,1],x[j,2],nreads-as.numeric(x[j,2]),perc,"NA"))
@@ -303,15 +305,16 @@ for (i in 1:dim(data3)[2]){
 			text(4.7,m*0.16-(j-1)*0.25,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col=2)
 			text(4.7,m*(-0.025),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.45,col=1)
 			pa="Low"
-			if(mut>10 & mut/(WT+mut)>0.75 & gnoMAX<0.0001){
+			#if(mut>10 & mut/(WT+mut)>0.75 & gnoMAX<0.0001){
+			if(mut>1 & mut/(WT+mut)>0.75 & gnoMAX<0.0001){
 				pa="High"
 			}
-
-			if(mut>10 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			if(mut>1 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			#if(mut>10 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score1=score1+1
 			}
-
-			if(mut>10 & mut/(WT+mut)>0.4 & mut/(WT+mut)<0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			if(mut>1 & mut/(WT+mut)>0.4 & mut/(WT+mut)<0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			#if(mut>10 & mut/(WT+mut)>0.4 & mut/(WT+mut)<0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score2=score2+1
 			}
 
@@ -324,7 +327,7 @@ for (i in 1:dim(data3)[2]){
 	if(min(exons[,i])<=0.1){
 		sco=0
 		for (k in 2:5){
-			if(medi2[k]>20 & exons[k,i]<0.1){
+			if((medi2[k]>20 & exons[k,i]<0.1) | (medi2[k]>5 & exons[k,i]==0)){
 				sco=max(sco,0.5)
 			}
 		}
@@ -332,11 +335,11 @@ for (i in 1:dim(data3)[2]){
 
 		sco=0
 		for (k in 8:10){
-			if(medi2[k]>20 & exons[k,i]<0.1){
+			if((medi2[k]>20 & exons[k,i]<0.1) | (medi2[k]>5 & exons[k,i]==0)){
 				sco=max(sco,0.5)
 			}
 		}
-		if(medi2[6]+medi2[7]>20 & exons[6,i]+exons[7,i]<0.2){
+		if((medi2[6]+medi2[7]>20 & exons[6,i]+exons[7,i]<0.2) | (medi2[6]+medi2[7]>5 & exons[6,i]+exons[7,i]==0)){
 			sco=max(sco,0.5)
 		}
 		score2=score2+sco
@@ -344,7 +347,7 @@ for (i in 1:dim(data3)[2]){
 		
 		sco=0
 		for (k in 11:12){
-			if(medi2[k]>20 & exons[k,i]<0.1){
+			if((medi2[k]>20 & exons[k,i]<0.1) | (medi2[k]>5 & exons[k,i]==0)){
 				sco=max(sco,1)
 			}
 		}
@@ -370,10 +373,10 @@ for (i in 1:dim(data3)[2]){
 	plot(1:4,ylim=c(0,m),xlim=c(1,15.5), xaxt = "n",xlab="",ylab="Coverage ratio vs. controls",cex=0,main=paste("Details on exons",sep=""),cex.main=2,cex.lab=1.4)
 	
 	for (j in 1:12){
-		if(medi2[j]<20){
+		if(medi2[j]<10){
 			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#ffcccc")
 		}
-		if(medi2[j]>=20 & medi2[j]<=100){
+		if(medi2[j]>=10 & medi2[j]<=20){
 			rect(j-0.4,-0.05,j+0.4,m*1.02,border=NA,col="#fde7b5")
 		}
 	}
@@ -401,8 +404,7 @@ for (i in 1:dim(data3)[2]){
 
 	text(beg,m*0.99,"Inferred sex:",cex=1.2,adj=0)
 	text(beg,m*0.95,sex[i],cex=1,adj=0)
-	#legend(beg,m*0.91,c("Very low cov. (<20)","Low cov. (<100)","No deletion","Deletion","Other individuals"),col=c("#ffcccc","#fde7b5",4,2,1),pch=c(15,15,16,16,16),pt.cex=c(3,3,2,2,1),bg="white",y.intersp=1.5)
-	legend(beg,m*0.91,c("No deletion","Deletion","Other individuals","Very low cov. (<20)","Low cov. (<100)"),col=c(4,2,1,"#ffcccc","#fde7b5"),pch=c(15,15,16,15,15),pt.cex=c(2,2,1,2,2),bg="white",y.intersp=1.5)
+	legend(beg,m*0.91,c("No deletion","Deletion","Other individuals","Very low cov. (<10)","Low cov. (<20)"),col=c(4,2,1,"#ffcccc","#fde7b5"),pch=c(15,15,16,15,15),pt.cex=c(2,2,1,2,2),bg="white",y.intersp=1.5)
 
 	if(min(exons[,i])>0.1){
 		text(beg,m*0.6,"No deletions\ndetected",adj=0,col=1,cex=1.2)
@@ -414,7 +416,7 @@ for (i in 1:dim(data3)[2]){
 				text(beg+0.2,m*(0.6-0.07*count),rownames(exons)[j],adj=0,col=2,cex=1)
 				count=count+1
 				pa="Low"
-				if(medi2[j]>20 & exons[j,i]<0.1){
+				if((medi2[j]>20 & exons[j,i]<0.1) | (medi2[j]>5 & exons[j,i]==0)){
 					pa="High"
 				}
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Hemi/homozygous deletion",pa,namesexons[j],"NA",exons2[j,i],round(exons[j,i],digits=2),"NA"))
@@ -422,7 +424,7 @@ for (i in 1:dim(data3)[2]){
 		}
 		if(exons[6,i]<0.1 & exons[7,i]<0.1){
 			pa="Low"
-			if(medi2[6]+medi2[7]>20 & exons[6,i]+exons[7,i]<0.1){
+			if((medi2[6]+medi2[7]>20 & exons[6,i]+exons[7,i]<0.1) | (medi2[6]+medi2[7]>5 & exons[6,i]+exons[7,i]==0)){
 				pa="High"
 			}
 			events=rbind(events,c(colnames(data3)[i],sex[i],"Hemi/homozygous deletion",pa,"OPN1MW/MW2-exon5","NA",exons2[6,i]+exons2[7,i],round(exons[6,i]+exons[7,i],digits=2),"NA"))

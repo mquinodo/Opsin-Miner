@@ -245,16 +245,16 @@ for (i in 1:dim(data3)[2]){
 				perc=round(as.numeric(x[j,2])/(nreads),digits=2)
 				text(4.7,m*(0.32-(j)*0.035),paste(x[j,1]," n=",x[j,2],"/",nreads," (",perc*100,"%)",sep=""),adj=0,col=2)
 				pa="Low"
-				if(as.numeric(x[j,1])>1 & as.numeric(perc)>0.75){
+				if(as.numeric(x[j,2])>1 & as.numeric(perc)>0.75){
 				#if(as.numeric(x[j,1])>10 & as.numeric(perc)>0.75){
 					pa="High"
 					score1=score1+1
 				}
-				if(as.numeric(x[j,1])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
+				if(as.numeric(x[j,2])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 				#if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 					score2=score2+0.5
 				}
-				if(as.numeric(x[j,1])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
+				if(as.numeric(x[j,2])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
 					score3=score3+0.5
 				}
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic haplotype",pa,x[j,1],x[j,2],nreads-as.numeric(x[j,2]),perc,"NA"))
@@ -265,15 +265,15 @@ for (i in 1:dim(data3)[2]){
 			perc=round(as.numeric(x[2])/(nreads),digits=2)
 			text(4.7,m*(0.32-(j)*0.035),paste(x[j,1]," n=",x[j,2],"/",nreads," (",perc*100,"%)",sep=""),adj=0,col=2)
 			pa="Low"
-			if(as.numeric(x[j])>1 & as.numeric(perc)>0.75){
+			if(as.numeric(x[2])>1 & as.numeric(perc)>0.75){
 				pa="High"
 				score1=score1+1
 			}
-			if(as.numeric(x[1])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
+			if(as.numeric(x[2])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 			#if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 				score2=score2+0.5
 			}
-			if(as.numeric(x[1])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
+			if(as.numeric(x[2])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
 				score3=score3+0.5
 			}
 			events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic haplotype",pa,x[j,1],x[j,2],nreads-as.numeric(x[2]),perc,"NA"))

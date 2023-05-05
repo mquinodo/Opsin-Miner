@@ -151,6 +151,7 @@ for (i in 1:dim(data3)[2]){
 
 	score1=0
 	score2=0
+	score3=0
 
 	pdf(file=paste(dir,"/06_plots/",colnames(data3)[i],"-both.pdf",sep=""),height=10,width=20)
 	par(mfrow=c(1,2),mgp=c(2.5,1,0),mar=c(8.1, 4.1, 4.1, 2.1))
@@ -234,24 +235,48 @@ for (i in 1:dim(data3)[2]){
 		text(4.7,m*(0.56-(j)*0.035),paste(x[j,1]," (n = ",x[j,2],")",sep=""),adj=0)
 	}
 	
-	x=haploP[which(haploP[,1]==colnames(data3)[i] & haploP[,3]>1),2:3]
-	if(length(which(haploP[,1]==colnames(data3)[i] & haploP[,3]>1))>0){
+	x=haploP[which(haploP[,1]==colnames(data3)[i] & as.numeric(haploP[,3])>1),2:3]
+	np=length(which(haploP[,1]==colnames(data3)[i] & as.numeric(haploP[,3])>1))
+	if(length(which(haploP[,1]==colnames(data3)[i] & as.numeric(haploP[,3])>1))>0){
 		text(4.7,m*0.32,"Pathogenic haplotypes (>1 read):",adj=0,cex=1.2,col=2)
-		x=x[sort(as.numeric(x[,2]), index.return=TRUE, decreasing=TRUE)$ix,]
-		for (j in 1:dim(x)[1]){
-			perc=round(as.numeric(x[j,2])/(nreads),digits=2)
+		if(np>1){
+			x=x[sort(as.numeric(x[,2]), index.return=TRUE, decreasing=TRUE)$ix,]
+			for (j in 1:dim(x)[1]){
+				perc=round(as.numeric(x[j,2])/(nreads),digits=2)
+				text(4.7,m*(0.32-(j)*0.035),paste(x[j,1]," n=",x[j,2],"/",nreads," (",perc*100,"%)",sep=""),adj=0,col=2)
+				pa="Low"
+				if(as.numeric(x[j,1])>1 & as.numeric(perc)>0.75){
+				#if(as.numeric(x[j,1])>10 & as.numeric(perc)>0.75){
+					pa="High"
+					score1=score1+1
+				}
+				if(as.numeric(x[j,1])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
+				#if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
+					score2=score2+0.5
+				}
+				if(as.numeric(x[j,1])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
+					score3=score3+0.5
+				}
+				events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic haplotype",pa,x[j,1],x[j,2],nreads-as.numeric(x[j,2]),perc,"NA"))
+			}
+		}
+		if(np==1){
+			j=1
+			perc=round(as.numeric(x[2])/(nreads),digits=2)
 			text(4.7,m*(0.32-(j)*0.035),paste(x[j,1]," n=",x[j,2],"/",nreads," (",perc*100,"%)",sep=""),adj=0,col=2)
 			pa="Low"
-			if(as.numeric(x[j,1])>1 & as.numeric(perc)>0.75){
-			#if(as.numeric(x[j,1])>10 & as.numeric(perc)>0.75){
+			if(as.numeric(x[j])>1 & as.numeric(perc)>0.75){
 				pa="High"
 				score1=score1+1
 			}
-			if(as.numeric(x[j,1])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
+			if(as.numeric(x[1])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 			#if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 				score2=score2+0.5
 			}
-			events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic haplotype",pa,x[j,1],x[j,2],nreads-as.numeric(x[j,2]),perc,"NA"))
+			if(as.numeric(x[1])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
+				score3=score3+0.5
+			}
+			events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic haplotype",pa,x[j,1],x[j,2],nreads-as.numeric(x[2]),perc,"NA"))
 		}
 	} else {
 		text(4.7,m*0.33,"No pathogenic\nhaplotypes detected",adj=0,cex=1.2,col=1)
@@ -313,9 +338,12 @@ for (i in 1:dim(data3)[2]){
 			#if(mut>10 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score1=score1+1
 			}
-			if(mut>1 & mut/(WT+mut)>0.4 & mut/(WT+mut)<0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			if(mut>1 & mut/(WT+mut)>0.4 & mut/(WT+mut)<=0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 			#if(mut>10 & mut/(WT+mut)>0.4 & mut/(WT+mut)<0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score2=score2+1
+			}
+			if(mut>1 & mut/(WT+mut)>0.1 & mut/(WT+mut)<=0.4 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+				score3=score3+0.5
 			}
 
 			events=rbind(events,c(colnames(data3)[i],sex[i],"Rare variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
@@ -326,6 +354,12 @@ for (i in 1:dim(data3)[2]){
 
 	if(min(exons[,i])<=0.1){
 		sco=0
+		
+		# LCR
+		if((medi2[1]>20 & exons[1,i]<0.1) | (medi2[1]>5 & exons[1,i]==0)){
+			sco=max(sco,2)
+		}
+		
 		for (k in 2:5){
 			if((medi2[k]>20 & exons[k,i]<0.1) | (medi2[k]>5 & exons[k,i]==0)){
 				sco=max(sco,0.5)
@@ -355,6 +389,7 @@ for (i in 1:dim(data3)[2]){
 	}
 
 	pheno="Normal"
+	if(score3>=0.5){pheno="Normal / Color blindness"}
 	if(score2==0.5){pheno="Color blindness"}
 	if(score2>=1){pheno="Color blindness / severe"}
 	if(score1>=1){pheno="Blue cone monochromacy / severe"}

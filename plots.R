@@ -321,10 +321,7 @@ for (i in 1:dim(data3)[2]){
 				t=paste("chrX:",NS[j,3],NS[j,4],">",NS[j,5],"\n",NS[j,10],sep="")
 				t2=paste("chrX:",NS[j,3],NS[j,4],">",NS[j,5],", ",NS[j,10],sep="")
 			}
-			text(4.7,m*0.16-(j-1)*0.25,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col=2)
-			text(4.7,m*(-0.025),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.45,col=1)
 			pa="Low"
-			
 			pathoV=0
 			if(mut>1 & mut/(WT+mut)>0.75 & gnoMAX<0.0001){
 				pa="High"
@@ -343,12 +340,16 @@ for (i in 1:dim(data3)[2]){
 			}
 			if(pathoV==0){	
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Rare variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
-				text(4.7,m*0.21,paste("Rare variant*:",sep=""),adj=0,cex=1.2,col=2)
+				text(4.7,m*0.21,paste("Rare variant (VUS)*:",sep=""),adj=0,cex=1.2,col="orange")
+				text(4.7,m*0.16-(j-1)*0.25,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col="orange")
+				text(4.7,m*(-0.025),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.45,col=1)
 				score4=score4+0.5
 			}
 			if(pathoV==1){	
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
 				text(4.7,m*0.21,paste("Pathogenic variant*:",sep=""),adj=0,cex=1.2,col=2)
+				text(4.7,m*0.16-(j-1)*0.25,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col=2)
+				text(4.7,m*(-0.025),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.45,col=1)
 			}
 		}
 	} else {
@@ -397,6 +398,7 @@ for (i in 1:dim(data3)[2]){
 	if(score4>=0.5){pheno="Normal with VUS"}
 	if(score3>=0.5){pheno="Normal / Color blindness"}
 	if(score2==0.5){pheno="Color blindness"}
+	if(score2==0.5 & score4>=0.5){pheno="Color blindness with VUS"}
 	if(score2==1){pheno="Color blindness / BCM-severe"}
 	if(score2>1){pheno="BCM-severe"}
 	if(score1>=1){pheno="BCM-severe"}

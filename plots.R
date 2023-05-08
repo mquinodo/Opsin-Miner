@@ -237,7 +237,7 @@ for (i in 1:dim(data3)[2]){
 	x=haploP[which(haploP[,1]==colnames(data3)[i] & as.numeric(haploP[,3])>1),2:3]
 	np=length(which(haploP[,1]==colnames(data3)[i] & as.numeric(haploP[,3])>1))
 	if(length(which(haploP[,1]==colnames(data3)[i] & as.numeric(haploP[,3])>1))>0){
-		text(4.7,m*0.32,"Pathogenic haplotypes (>1 read):",adj=0,cex=1.2,col=2)
+		text(4.7,m*0.32,"Pathogenic haplotype(s) (>1 read):",adj=0,cex=1.2,col=2)
 		if(np>1){
 			x=x[sort(as.numeric(x[,2]), index.return=TRUE, decreasing=TRUE)$ix,]
 			for (j in 1:dim(x)[1]){

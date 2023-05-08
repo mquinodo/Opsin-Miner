@@ -1,5 +1,4 @@
 
-
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 
@@ -453,7 +452,13 @@ for (i in 1:dim(data3)[2]){
 	if(min(exons[,i])>0.1){
 		text(beg,m*0.6,"No deletions\ndetected",adj=0,col=1,cex=1.2)
 	} else {
-		text(beg,m*0.6,"Deletion(s) detected:",adj=0,col=2,cex=1.2)
+
+		if(min(exons[c(1:5,8:12),i])<0.1 | (exons[6,i]<0.1 & exons[7,i]<0.1)){
+			text(beg,m*0.6,"Deletion(s) detected:",adj=0,col=2,cex=1.2)
+		} else {
+			text(beg,m*0.6,"Deletion(s) detected:",adj=0,col=1,cex=1.2)
+		}
+
 		count=1
 		for (j in c(1:5,8:12)){
 			if(exons[j,i]<0.1){
@@ -495,5 +500,3 @@ if(dim(events)[1]>0){
 
 write.table(events,file=paste(dir,"/0.events.tsv",sep=""),quote=F,row.names=F,sep="\t")
 write.table(phenotype[,c(1,2,4)],file=paste(dir,"/0.phenotypes-all.tsv",sep=""),quote=F,row.names=F,sep="\t")
-
-

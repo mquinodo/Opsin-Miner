@@ -157,7 +157,7 @@ for (i in 1:dim(data3)[2]){
 	par(mfrow=c(1,2),mgp=c(2.5,1,0),mar=c(8.1, 4.1, 4.1, 2.1))
 	m=max(2,c(LW,MWMW2,MW,MW2)*1,na.rm=T)
 	m=max(2.5,c(LW[i],MWMW2[i],MW[i],MW2[i])*1.2,na.rm=T)
-	plot(1:4,ylim=c(0,m),xlim=c(0.5,6.8), xaxt = "n",xlab="",ylab="Coverage ratio vs. controls",cex=0,main=paste("OPN1LW, MW and MW2 analysis for ",colnames(data3)[i],sep=""),cex.main=2,cex.lab=1.4)
+	plot(1:4,ylim=c(0,m),xlim=c(0.5,6.8), xaxt = "n",xlab="",ylab="Coverage ratio vs. controls",cex=0,main=paste("OPN1LW/MW/MW2 analysis for ",colnames(data3)[i],sep=""),cex.main=2,cex.lab=1.4)
 	par(mgp=c(2.5,3,0))
 
 	for (j in 1:4){
@@ -181,11 +181,13 @@ for (i in 1:dim(data3)[2]){
 	if(MW2[i]<0.1){cols[4]=2}
 
 	axis(1, at=c(1,2,3,4), labels=c(
-		paste("OPN1LW\nexons 1,2,4,5\nratio = ",round(LW[i],digits=2),sep=""),
-		paste("OPN1MW/MW2\nexons 1,2,4\nratio = ",round(MWMW2[i],digits=2),sep=""),
-		paste("OPN1MW\nexon 5\nratio = ",round(MW[i],digits=2),sep=""),
-		paste("OPN1MW2\nexon 5\nratio = ",round(MW2[i],digits=2),sep="")))
+		paste("OPN1LW\n(exons 1,2,4,5)\nratio = ",round(LW[i],digits=2),sep=""),
+		paste("OPN1MW/MW2\n(exons 1,2,4)\nratio = ",round(MWMW2[i],digits=2),sep=""),
+		paste("OPN1MW\n(exon 5)\nratio = ",round(MW[i],digits=2),sep=""),
+		paste("OPN1MW2\n(exon 5)\nratio = ",round(MW2[i],digits=2),sep="")))
 	n=length(LW)-1
+
+	text(x=2.5, y=m*(-0.19), 'Ratio per gene based on exons with differences', xpd=NA,adj=0.5,cex=1.2)
 
 	rect(0.7,0,1.3,LW[i],col=cols[1])
 	rect(1.7,0,2.3,MWMW2[i],col=cols[2])
@@ -205,24 +207,24 @@ for (i in 1:dim(data3)[2]){
 	text(4.7,m*0.89,paste("Inferred sex: ",sex[i],sep=""),cex=1.2,adj=0)
 	legend(4.7,m*0.85,c("No deletion","Deletion","Other individuals","Very low coverage (<10)","Low coverage (<20)"),col=c(4,2,1,"#ffcccc","#fde7b5"),pch=c(15,15,16,15,15),pt.cex=c(2,2,1,2,2),bg="white",y.intersp=1.5)
 
-	if(LW[i]<0.1 & MWMW2[i]>=0.1){
-		text(4.7,m*0.02,"Potential deletion\nof OPN1LW",adj=0,col=2,cex=1.2)
-	}
-	if(LW[i]>=0.1 & MWMW2[i]<0.1){
-		text(4.7,m*0.02,"Potential deletion\nof OPN1MW/MW2",adj=0,col=2,cex=1.2)
-	}
-	if(LW[i]<0.1 & MWMW2[i]<0.1){
-		text(4.7,m*0.05,"Potential deletion\nof OPN1LW and\nOPN1MW/MW2",adj=0,col=2,cex=1.2)
-	}
-	if(LW[i]>=0.1 & MWMW2[i]>=0.1 & MW[i]>=0.1 & MW2[i]>=0.1){
-		text(4.7,m*0.02,"No large deletions",adj=0,cex=1.2,col=1)
-	}
-	if(MW[i]<0.1 & MW2[i]>=0.1 & LW[i]>=0.1 & MWMW2[i]>=0.1){
-		text(4.7,m*0.02,"Potential deletion\nof OPN1MW exon5",adj=0,col=1,cex=1.2)
-	}
-	if(MW[i]>=0.1 & MW2[i]<0.1 & LW[i]>=0.1 & MWMW2[i]>=0.1){
-		text(4.7,m*0.02,"Potential deletion\nof OPN1MW2 exon5",adj=0,col=1,cex=1.2)
-	}
+	# if(LW[i]<0.1 & MWMW2[i]>=0.1){
+	# 	text(4.7,m*0.02,"Potential deletion\nof OPN1LW",adj=0,col=2,cex=1.2)
+	# }
+	# if(LW[i]>=0.1 & MWMW2[i]<0.1){
+	# 	text(4.7,m*0.02,"Potential deletion\nof OPN1MW/MW2",adj=0,col=2,cex=1.2)
+	# }
+	# if(LW[i]<0.1 & MWMW2[i]<0.1){
+	# 	text(4.7,m*0.05,"Potential deletion\nof OPN1LW and\nOPN1MW/MW2",adj=0,col=2,cex=1.2)
+	# }
+	# if(LW[i]>=0.1 & MWMW2[i]>=0.1 & MW[i]>=0.1 & MW2[i]>=0.1){
+	# 	text(4.7,m*0.02,"No large deletions",adj=0,cex=1.2,col=1)
+	# }
+	# if(MW[i]<0.1 & MW2[i]>=0.1 & LW[i]>=0.1 & MWMW2[i]>=0.1){
+	# 	text(4.7,m*0.02,"Potential deletion\nof OPN1MW exon5",adj=0,col=1,cex=1.2)
+	# }
+	# if(MW[i]>=0.1 & MW2[i]<0.1 & LW[i]>=0.1 & MWMW2[i]>=0.1){
+	# 	text(4.7,m*0.02,"Potential deletion\nof OPN1MW2 exon5",adj=0,col=1,cex=1.2)
+	# }
 
 	nreads=sum(haplo[which(haplo[,1]==colnames(data3)[i]),3])
 
@@ -300,7 +302,7 @@ for (i in 1:dim(data3)[2]){
 				}
 				if(length(gno)==0){gno2="not in gnomAD"}
 
-				t=paste("chrX:",NS[j,3],NS[j,4],">",NS[j,5],"\n",NS[j,11],sep="")
+				t=paste("chrX:",NS[j,3],NS[j,4],">",NS[j,5],"\n",NS[j,10],"\n",NS[j,11],sep="")
 				t2=paste("chrX:",NS[j,3],NS[j,4],">",NS[j,5],", ",NS[j,10],", ",NS[j,11],sep="")
 			} else {
 				c=strsplit(NS[j,10],":")[[1]][2]
@@ -340,16 +342,16 @@ for (i in 1:dim(data3)[2]){
 			}
 			if(pathoV==0){	
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Rare variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
-				text(4.7,m*0.21,paste("Rare variant (VUS)*:",sep=""),adj=0,cex=1.2,col="orange")
-				text(4.7,m*0.16-(j-1)*0.25,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col="orange")
-				text(4.7,m*(-0.025),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.45,col=1)
+				text(4.7,m*0.21,paste("Rare variant (VUS, hg19)*:",sep=""),adj=0,cex=1.2,col="orange")
+				text(4.7,m*0.145-(j-1)*0.35,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col="orange")
+				text(4.7,m*(-0.015),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.7,col=1)
 				score4=score4+0.5
 			}
 			if(pathoV==1){	
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
-				text(4.7,m*0.21,paste("Pathogenic variant*:",sep=""),adj=0,cex=1.2,col=2)
-				text(4.7,m*0.16-(j-1)*0.25,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col=2)
-				text(4.7,m*(-0.025),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.45,col=1)
+				text(4.7,m*0.21,paste("Pathogenic variant (hg19)*:",sep=""),adj=0,cex=1.2,col=2)
+				text(4.7,m*0.145-(j-1)*0.35,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col=2)
+				text(4.7,m*(-0.015),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.7,col=1)
 			}
 		}
 	} else {
@@ -418,7 +420,7 @@ for (i in 1:dim(data3)[2]){
 	par(mgp=c(2.5,0.8,0),mar=c(8.1, 4.1, 4.1, 2.1))
 	m=max(2,exons*1,na.rm=T)
 	m=max(2.5,exons[,i]*1.2,na.rm=T)
-	plot(1:4,ylim=c(0,m),xlim=c(1,15.5), xaxt = "n",xlab="",ylab="Coverage ratio vs. controls",cex=0,main=paste("Details on exons",sep=""),cex.main=2,cex.lab=1.4)
+	plot(1:4,ylim=c(0,m),xlim=c(1,15.5), xaxt = "n",xlab="",ylab="Coverage ratio vs. controls",cex=0,main=paste("Details on exons and deletions",sep=""),cex.main=2,cex.lab=1.4)
 	
 	for (j in 1:12){
 		if(medi2[j]<10){
@@ -490,7 +492,7 @@ for (i in 1:dim(data3)[2]){
 		}
 
 	}
-	text(beg+0.2,m*0,"* LCR is usually not covered\n  and can have high variability.",cex=0.7,adj=0)
+	text(beg+0.2,m*0,"* LCR is not covered by WES\n  and can have high variability.",cex=0.7,adj=0)
 
 	phenotype=rbind(phenotype,c(colnames(data3)[i],sex[i],score1+score2/2,pheno))
 
@@ -505,5 +507,3 @@ if(dim(events)[1]>0){
 
 write.table(events,file=paste(dir,"/0.events.tsv",sep=""),quote=F,row.names=F,sep="\t")
 write.table(phenotype[,c(1,2,4)],file=paste(dir,"/0.phenotypes-all.tsv",sep=""),quote=F,row.names=F,sep="\t")
-
-

@@ -502,3 +502,5 @@ if(dim(events)[1]>0){
 
 write.table(events,file=paste(dir,"/0.events.tsv",sep=""),quote=F,row.names=F,sep="\t")
 write.table(phenotype[,c(1,2,4)],file=paste(dir,"/0.phenotypes-all.tsv",sep=""),quote=F,row.names=F,sep="\t")
+
+

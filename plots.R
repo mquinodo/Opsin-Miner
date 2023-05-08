@@ -228,8 +228,6 @@ for (i in 1:dim(data3)[2]){
 
 	text(4.7,m*0.56,"Exon 3 haplotypes:",adj=0,cex=1.2)
 	x=haplo[which(haplo[,1]==colnames(data3)[i] & haplo[,3]>0),2:3]
-	#text(4.7,m*0.56,"Exon 3 haplotypes (>1 reads):",adj=0,cex=1.2)
-	#x=haplo[which(haplo[,1]==colnames(data3)[i] & haplo[,3]>1),2:3]
 	x=x[sort(as.numeric(x[,2]), index.return=TRUE, decreasing=TRUE)$ix,]
 	for (j in 1:dim(x)[1]){
 		text(4.7,m*(0.56-(j)*0.035),paste(x[j,1]," (n = ",x[j,2],")",sep=""),adj=0)

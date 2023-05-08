@@ -397,8 +397,8 @@ for (i in 1:dim(data3)[2]){
 	pheno="Normal"
 	if(score4>=0.5){pheno="Normal with VUS"}
 	if(score3>=0.5){pheno="Normal / Color blindness"}
-	if(score2==0.5){pheno="Color blindness"}
-	if(score2==0.5 & score4>=0.5){pheno="Color blindness with VUS"}
+	if(score2==0.75){pheno="Color blindness"}
+	if(score2==0.75 & score4>=0.5){pheno="Color blindness with VUS"}
 	if(score2==1){pheno="Color blindness / BCM-severe"}
 	if(score2>1){pheno="BCM-severe"}
 	if(score1>=1){pheno="BCM-severe"}

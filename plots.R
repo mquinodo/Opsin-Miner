@@ -131,9 +131,9 @@ sex[which(z1<(-1.5))]="Male"
 sex[which(z1>(1.5))]="Female"
 sex[which(z1<=(1.5) & z1>=(-1.5))]="Undetermined"
 
-pdf(file=paste(dir,"/06_plots/","0.sex.pdf",sep=""),height=10,width=20)
-plot(z1)
-dev.off()
+# pdf(file=paste(dir,"/06_plots/","0.sex.pdf",sep=""),height=10,width=20)
+# plot(z1)
+# dev.off()
 
 sexout=cbind(colnames(data3),sex,z1)
 colnames(sexout)=c("ID","Inferred-sex","Z-score")

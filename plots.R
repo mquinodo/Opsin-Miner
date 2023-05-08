@@ -152,6 +152,7 @@ for (i in 1:dim(data3)[2]){
 	score1=0
 	score2=0
 	score3=0
+	score4=0
 
 	pdf(file=paste(dir,"/06_plots/",colnames(data3)[i],"-both.pdf",sep=""),height=10,width=20)
 	par(mfrow=c(1,2),mgp=c(2.5,1,0),mar=c(8.1, 4.1, 4.1, 2.1))
@@ -279,7 +280,6 @@ for (i in 1:dim(data3)[2]){
 
 	NS=rareVariants[which(rareVariants[,1]==colnames(data3)[i]),]
 	if(dim(NS)[1]>0){
-		text(4.7,m*0.21,paste("Rare variant(s)*:",sep=""),adj=0,cex=1.2,col=2)
 		for (j in 1:dim(NS)[1]){
 			gnoMAX=0
 			mut=as.numeric(NS[j,7])
@@ -327,7 +327,6 @@ for (i in 1:dim(data3)[2]){
 			pa="Low"
 			
 			pathoV=0
-			
 			if(mut>1 & mut/(WT+mut)>0.75 & gnoMAX<0.0001){
 				pa="High"
 			}
@@ -345,9 +344,12 @@ for (i in 1:dim(data3)[2]){
 			}
 			if(pathoV==0){	
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Rare variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
+				text(4.7,m*0.21,paste("Rare variant*:",sep=""),adj=0,cex=1.2,col=2)
+				score4=score4+0.5
 			}
 			if(pathoV==1){	
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
+				text(4.7,m*0.21,paste("Patho. variant*:",sep=""),adj=0,cex=1.2,col=2)
 			}
 		}
 	} else {
@@ -393,6 +395,7 @@ for (i in 1:dim(data3)[2]){
 	}
 
 	pheno="Normal"
+	if(score4>=0.5){pheno="Normal with VUS"}
 	if(score3>=0.5){pheno="Normal / Color blindness"}
 	if(score2==0.5){pheno="Color blindness"}
 	if(score2==1){pheno="Color blindness / BCM-severe"}
@@ -402,6 +405,7 @@ for (i in 1:dim(data3)[2]){
 	colp=3
 	cexp=1.5
 	if(pheno!="Normal"){colp=2; cexp=1.2}
+	if(pheno=="Normal with VUS"){colp="orange"; cexp=1.2}
 	text(4.7,m*1,"Inferred phenotype: ",cex=1.5,adj=0)
 	text(4.7,m*0.95,pheno,cex=cexp,adj=0,col=colp)
 

@@ -128,9 +128,9 @@ for (i in 1:length(rat)){
 }
 z1=zm+zf
 sex=z1
-sex[which(z1<(-3))]="Male"
-sex[which(z1>(3))]="Female"
-sex[which(z1<=(3) & z1>=(-3))]="Undetermined"
+sex[which(z1<(-1.5))]="Male"
+sex[which(z1>(1.5))]="Female"
+sex[which(z1<=(1.5) & z1>=(-1.5))]="Undetermined"
 
 pdf(file=paste(dir,"/06_plots/","0.sex.pdf",sep=""),height=10,width=20)
 plot(z1)

@@ -330,15 +330,15 @@ for (i in 1:dim(data3)[2]){
 			if(mut>1 & mut/(WT+mut)>0.75 & gnoMAX<0.0001){
 				pa="High"
 			}
-			if(mut>1 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			if(mut>1 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1\\?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score1=score1+1
 				pathoV=1
 			}
-			if(mut>1 & mut/(WT+mut)>0.4 & mut/(WT+mut)<=0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			if(mut>1 & mut/(WT+mut)>0.4 & mut/(WT+mut)<=0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1\\?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score2=score2+1
 				pathoV=1
 			}
-			if(mut>1 & mut/(WT+mut)>0.1 & mut/(WT+mut)<=0.4 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
+			if(mut>1 & mut/(WT+mut)>0.1 & mut/(WT+mut)<=0.4 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1\\?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score3=score3+0.5
 				pathoV=1
 			}

@@ -244,13 +244,11 @@ for (i in 1:dim(data3)[2]){
 				text(4.7,m*(0.32-(j)*0.035),paste(x[j,1]," n=",x[j,2],"/",nreads," (",perc*100,"%)",sep=""),adj=0,col=2)
 				pa="Low"
 				if(as.numeric(x[j,2])>1 & as.numeric(perc)>0.75){
-				#if(as.numeric(x[j,1])>10 & as.numeric(perc)>0.75){
 					pa="High"
 					score1=score1+1
 				}
 				if(as.numeric(x[j,2])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
-				#if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
-					score2=score2+0.5
+					score2=score2+1
 				}
 				if(as.numeric(x[j,2])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
 					score3=score3+0.5
@@ -268,7 +266,6 @@ for (i in 1:dim(data3)[2]){
 				score1=score1+1
 			}
 			if(as.numeric(x[2])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
-			#if(as.numeric(x[j,1])>10 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
 				score2=score2+0.5
 			}
 			if(as.numeric(x[2])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
@@ -328,23 +325,30 @@ for (i in 1:dim(data3)[2]){
 			text(4.7,m*0.16-(j-1)*0.25,paste(t,"\n",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ",sep=""),adj=0,cex=0.9,col=2)
 			text(4.7,m*(-0.025),"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.45,col=1)
 			pa="Low"
-			#if(mut>10 & mut/(WT+mut)>0.75 & gnoMAX<0.0001){
+			
+			pathoV=0
+			
 			if(mut>1 & mut/(WT+mut)>0.75 & gnoMAX<0.0001){
 				pa="High"
 			}
 			if(mut>1 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
-			#if(mut>10 & mut/(WT+mut)>0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score1=score1+1
+				pathoV=1
 			}
 			if(mut>1 & mut/(WT+mut)>0.4 & mut/(WT+mut)<=0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
-			#if(mut>10 & mut/(WT+mut)>0.4 & mut/(WT+mut)<0.75 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score2=score2+1
+				pathoV=1
 			}
 			if(mut>1 & mut/(WT+mut)>0.1 & mut/(WT+mut)<=0.4 & (NS[j,11]=="NP_064445.2:p.(Cys203Arg)" | NS[j,11]=="NP_064445.2:p.(Asn94Lys)" | NS[j,11]=="NP_064445.2:p.(Arg330Gln)" | NS[j,11]=="NP_064445.2:p.(Gly338Glu)" | NS[j,11]=="NP_064445.2:p.(Trp177Arg)" | grepl("Met1?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("+1G",NS[j,10])==T | grepl("+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score3=score3+0.5
+				pathoV=1
 			}
-
-			events=rbind(events,c(colnames(data3)[i],sex[i],"Rare variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
+			if(pathoV==0){	
+				events=rbind(events,c(colnames(data3)[i],sex[i],"Rare variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
+			}
+			if(pathoV==1){	
+				events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
+			}
 		}
 	} else {
 		text(4.7,m*0.175,paste("No coding variants\ndetected",sep=""),adj=0,cex=1.2,col=1)
@@ -355,12 +359,14 @@ for (i in 1:dim(data3)[2]){
 		
 		# LCR
 		if((medi2[1]>20 & exons[1,i]<0.1) | (medi2[1]>5 & exons[1,i]==0)){
-			sco=max(sco,2)
+			sco=max(sco,1)
 		}
+		score1=score1+sco
 		
+		sco=0
 		for (k in 2:5){
 			if((medi2[k]>20 & exons[k,i]<0.1) | (medi2[k]>5 & exons[k,i]==0)){
-				sco=max(sco,0.5)
+				sco=max(sco,0.75)
 			}
 		}
 		score2=score2+sco
@@ -368,11 +374,11 @@ for (i in 1:dim(data3)[2]){
 		sco=0
 		for (k in 8:10){
 			if((medi2[k]>20 & exons[k,i]<0.1) | (medi2[k]>5 & exons[k,i]==0)){
-				sco=max(sco,0.5)
+				sco=max(sco,0.75)
 			}
 		}
 		if((medi2[6]+medi2[7]>20 & exons[6,i]+exons[7,i]<0.2) | (medi2[6]+medi2[7]>5 & exons[6,i]+exons[7,i]==0)){
-			sco=max(sco,0.5)
+			sco=max(sco,0.75)
 		}
 		score2=score2+sco
 
@@ -389,8 +395,9 @@ for (i in 1:dim(data3)[2]){
 	pheno="Normal"
 	if(score3>=0.5){pheno="Normal / Color blindness"}
 	if(score2==0.5){pheno="Color blindness"}
-	if(score2>=1){pheno="Color blindness / severe"}
-	if(score1>=1){pheno="Blue cone monochromacy / severe"}
+	if(score2==1){pheno="Color blindness / BCM-severe"}
+	if(score2>1){pheno="BCM-severe"}
+	if(score1>=1){pheno="BCM-severe"}
 
 	colp=3
 	cexp=1.5

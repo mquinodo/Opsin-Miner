@@ -219,10 +219,10 @@ for (i in 1:dim(data3)[2]){
 		text(4.7,m*0.02,"No large deletions",adj=0,cex=1.2,col=1)
 	}
 	if(MW[i]<0.1 & MW2[i]>=0.1 & LW[i]>=0.1 & MWMW2[i]>=0.1){
-		text(4.7,m*0.02,"Potential deletion\nof OPN1MW exon5",adj=0,col=2,cex=1.2)
+		text(4.7,m*0.02,"Potential deletion\nof OPN1MW exon5",adj=0,col=1,cex=1.2)
 	}
 	if(MW[i]>=0.1 & MW2[i]<0.1 & LW[i]>=0.1 & MWMW2[i]>=0.1){
-		text(4.7,m*0.02,"Potential deletion\nof OPN1MW2 exon5",adj=0,col=2,cex=1.2)
+		text(4.7,m*0.02,"Potential deletion\nof OPN1MW2 exon5",adj=0,col=1,cex=1.2)
 	}
 
 	nreads=sum(haplo[which(haplo[,1]==colnames(data3)[i]),3])
@@ -475,7 +475,7 @@ for (i in 1:dim(data3)[2]){
 		}
 		for (j in c(6,7)){
 			if(exons[j,i]<0.1){
-				text(beg+0.2,m*(0.6-0.07*count),rownames(exons)[j],adj=0,col=2,cex=1)
+				text(beg+0.2,m*(0.6-0.07*count),rownames(exons)[j],adj=0,col=1,cex=1)
 			}
 		}
 

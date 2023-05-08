@@ -267,7 +267,7 @@ for (i in 1:dim(data3)[2]){
 				score1=score1+1
 			}
 			if(as.numeric(x[2])>1 & as.numeric(perc)<=0.75 & as.numeric(perc)>0.4){
-				score2=score2+0.5
+				score2=score2+1
 			}
 			if(as.numeric(x[2])>1 & as.numeric(perc)<=0.4 & as.numeric(perc)>0.1){
 				score3=score3+0.5

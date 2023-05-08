@@ -349,7 +349,7 @@ for (i in 1:dim(data3)[2]){
 			}
 			if(pathoV==1){	
 				events=rbind(events,c(colnames(data3)[i],sex[i],"Pathogenic variant",pa,t2,mut,WT,round(mut/(WT+mut),digits=2),gno2))
-				text(4.7,m*0.21,paste("Patho. variant*:",sep=""),adj=0,cex=1.2,col=2)
+				text(4.7,m*0.21,paste("Pathogenic variant*:",sep=""),adj=0,cex=1.2,col=2)
 			}
 		}
 	} else {

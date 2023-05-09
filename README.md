@@ -6,6 +6,7 @@ This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from
 It was developped on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
 
 ## Prerequisites (version recommended)
++ SAMtools [[Link](http://www.htslib.org/download/)] (>= v1.10)
 + BCFTools [[Link](https://samtools.github.io/bcftools/howtos/install.html)] (>= v1.9)
 + BEDTools [[Link](https://bedtools.readthedocs.io/en/latest/content/installation.html)] (>= v2.25.0)
 + Rscript [[Link](https://cran.r-project.org/mirrors.html)] (>= v3.2.0)
@@ -33,8 +34,7 @@ Option  | Value  | Description
 --script | STRING | Folder where the scripts are (e.g. XYZ/Opsin-Miner-main)
 --out | STRING | Folder for outputs
 --input | STRING | Tab-delimited text file with 2 or 3 columns: ID, forward FASTQ file and eventually reverse FASTQ file
---picard | STRING | JAR file to run Picard
---gatk | STRING | JAR file to run GATK
+--config | STRING | config text file containging path to executables
 
 ## Outputs
 The main output files which contain all required information are:

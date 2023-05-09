@@ -1,44 +1,6 @@
 #!/bin/bash
 
-usage() { echo "## ERROR: Usage: $0 [--script <string>] [--out <string>] [--input <string>] [--picard <string>] [--gatk <string>]. Exit." 1>&2; exit 1; }
-
-nobcftools() { echo "## ERROR: bcftools lower than v1.9 -> Please Update! Exit." 1>&2; exit 1; }
-nobedtools() { echo "## ERROR: bedtools lower than v2.24.0 -> Please Update! Exit." 1>&2; exit 1; }
-noRversion() { echo "## ERROR: R lower than v3.2.0 -> Please Update! Exit." 1>&2; exit 1; }
-nobwa() { echo "## ERROR: BWA not installed -> Please Install! Exit." 1>&2; exit 1; }
-
-
-currentver="$(bcftools -v | head -n1 | cut -d" " -f2)"
-requiredver="1.9"
-if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
-    echo "# bcftools higher or equal to v1.9"
-else
-    nobcftools
-fi
-
-currentver="$(bedtools --version | cut -d" " -f2)"
-requiredver="v2.24.0"
-if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
-    echo "# bedtools higher or equal to v2.24.0"
-else
-    nobedtools
-fi
-
-currentver="$(R --version | grep "R version" | cut -d" " -f3)"
-requiredver="3.2.0"
-if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
-    echo "# R higher or equal to v3.2.0"
-else
-    noRversion
-fi
-
-if ! command -v bwa &> /dev/null
-then
-    nobwa
-else
-	echo "# BWA installed"
-fi
-
+usage() { echo "## ERROR: Usage: $0 [--script <string>] [--out <string>] [--input <string>] [--config <string>]. Exit." 1>&2; exit 1; }
 
 while getopts ":-:" o; do
     case "${o}" in
@@ -53,11 +15,8 @@ while getopts ":-:" o; do
                 input)
                     input="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
                     ;;
-                picard)
-                    picard="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
-                    ;;
-                gatk)
-                    gatk="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+                config)
+                    config="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
                     ;;
 				*)
             		usage
@@ -79,12 +38,91 @@ fi
 if [ -z "${input}" ]; then
     usage
 fi
-if [ -z "${picard}" ]; then
+if [ -z "${config}" ]; then
     usage
 fi
-if [ -z "${gatk}" ]; then
-    usage
+
+if [ ! -f "$config" ]; then
+  echo "Config file does not exist!"
+  exit 1
 fi
+
+samtools=$(grep "^samtools" "$config" | cut -f2)
+bcftools=$(grep "^bcftools" "$config" | cut -f2)
+bedtools=$(grep "^bedtools" "$config" | cut -f2)
+Rscript=$(grep "^Rscript" "$config" | cut -f2)
+bwa=$(grep "^bwa" "$config" | cut -f2)
+java=$(grep "^java" "$config" | cut -f2)
+picard=$(grep "^picard" "$config" | cut -f2)
+gatk=$(grep "^gatk" "$config" | cut -f2)
+
+nosamtools() { echo "## ERROR: samtools lower than v1.10 -> Please Update! Exit." 1>&2; exit 1; }
+nobcftools() { echo "## ERROR: bcftools lower than v1.9 -> Please Update! Exit." 1>&2; exit 1; }
+nobedtools() { echo "## ERROR: bedtools lower than v2.24.0 -> Please Update! Exit." 1>&2; exit 1; }
+noRversion() { echo "## ERROR: R lower than v3.2.0 -> Please Update! Exit." 1>&2; exit 1; }
+nobwa() { echo "## ERROR: BWA not installed -> Please Install! Exit." 1>&2; exit 1; }
+nojava() { echo "## ERROR: Java not installed -> Please Install! Exit." 1>&2; exit 1; }
+nopicard() { echo "## ERROR: picard jar file not found -> Please download it! Exit." 1>&2; exit 1; }
+nogatk() { echo "## ERROR: gatk jar file not found -> Please download it Exit." 1>&2; exit 1; }
+
+currentver="$($samtools --version | head -n1 | cut -d" " -f2)"
+requiredver="1.10"
+if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+    echo "# samtools higher or equal to v1.10"
+else
+    nosamtools
+fi
+
+currentver="$($bcftools -v | head -n1 | cut -d" " -f2)"
+requiredver="1.9"
+if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+    echo "# bcftools higher or equal to v1.9"
+else
+    nobcftools
+fi
+
+currentver="$($bedtools --version | cut -d" " -f2)"
+requiredver="v2.24.0"
+if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+    echo "# bedtools higher or equal to v2.24.0"
+else
+    nobedtools
+fi
+
+currentver="$($Rscript --version | grep "version" | cut -d" " -f4)"
+requiredver="3.2.0"
+if [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then 
+    echo "# R higher or equal to v3.2.0"
+else
+    noRversion
+fi
+
+if ! command -v $bwa &> /dev/null
+then
+    nobwa
+else
+	echo "# BWA installed"
+fi
+
+if ! command -v $java &> /dev/null
+then
+    nojava
+else
+	echo "# java installed"
+fi
+
+if [ ! -f "$picard" ]; then
+    nopicard
+else
+	echo "# picard jar file found"
+fi
+
+if [ ! -f "$gatk" ]; then
+    nogatk
+else
+	echo "# gatk jar file found"
+fi
+
 
 mkdir -p $out
 mkdir -p $out/00_raw-sequences
@@ -121,10 +159,10 @@ if [ ! -f $ref2 ]
 then
 	echo "Step 0.3: Creating chrX reference with masked OPN1MW, OPN1MW2 and polymorphisms in OPN1LW (will be done only once)"
 	# extract chrX
-	samtools faidx $ref1 chrX > $script/data/chrX.fa
+	$samtools faidx $ref1 chrX > $script/data/chrX.fa
 
 	# mask region with OPN1MW and OPN1MW2
-	bedtools maskfasta -fi $script/data/chrX.fa -bed $script/data/OPN1MWMW2.bed -fo $script/data/chrX.temp.fa
+	$bedtools maskfasta -fi $script/data/chrX.fa -bed $script/data/OPN1MWMW2.bed -fo $script/data/chrX.temp.fa
 
 	# remplace differences by Ns in OPN1LW in exon 3 (9 positions) and same for differenc ein other exons
 	sed 's/CATTTCCTGGGAGAGGTGGCTGGTGGTGTGCAAGCCCTTTGGCAATGTGAGATTTGATGC/CATTTCCTGGGAGAGNTGGNTGGTGGTNTGCAAGCCCTTTGGCAANGTGAGATTTGATGC/g' $script/data/chrX.temp.fa > $script/data/chrX.temp1.fa
@@ -147,9 +185,9 @@ then
 	# remove temp files
 	rm $script/data/chrX.temp* $script/data/chrX.fa
 	# indexes for the chrX modified reference
-	samtools faidx $script/data/chrX.masked-both.fa
-	bwa index $script/data/chrX.masked-both.fa 2>> $out/07_logs/BWA-index-genome.txt
-	java -jar $picard CreateSequenceDictionary -R $script/data/chrX.masked-both.fa -O $script/data/chrX.masked-both.dict >> $out/07_logs/picard-dictionary.txt 2>&1
+	$samtools faidx $script/data/chrX.masked-both.fa
+	$bwa index $script/data/chrX.masked-both.fa 2>> $out/07_logs/BWA-index-genome.txt
+	$java -jar $picard CreateSequenceDictionary -R $script/data/chrX.masked-both.fa -O $script/data/chrX.masked-both.dict >> $out/07_logs/picard-dictionary.txt 2>&1
 fi
 
 
@@ -201,18 +239,17 @@ do
 	if [ ! -f $file ]
 	then
 		# recreate BAM file: align selected reads and then convert SAM to BAM
-		export PATH="$PATH:/usr/local/bin/bwa-0.7.15"
 		RG=$(echo "@RG\tID:$pat\tSM:$pat\tPL:Illumina")
-		bwa mem -M -C -t 32 -R $RG $ref1 $out/00_raw-sequences/$pat.sel.fastq.gz > $out/temp/$pat.sam 2>> $out/07_logs/BWA-genome.txt
-		java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.sam -O $out/01_bam/$pat.bam -TMP_DIR $out/temp >> $out/07_logs/picard-genome.txt 2>&1
-		samtools index $out/01_bam/$pat.bam
+		$bwa mem -M -C -t 32 -R $RG $ref1 $out/00_raw-sequences/$pat.sel.fastq.gz > $out/temp/$pat.sam 2>> $out/07_logs/BWA-genome.txt
+		$java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.sam -O $out/01_bam/$pat.bam -TMP_DIR $out/temp >> $out/07_logs/picard-genome.txt 2>&1
+		$samtools index $out/01_bam/$pat.bam
 		rm $out/temp/$pat.sam
 	fi
 
 	if [ ! -f $out/05_haplotypes/$pat.haplotypes.tsv ]
 	then
 		# extract sequences mapping to OPN1 region
-		samtools view $out/01_bam/$pat.bam "chrX:153390252-153510581" | cut -f10 > $out/temp/$pat.seq.all.tsv
+		$samtools view $out/01_bam/$pat.bam "chrX:153390252-153510581" | cut -f10 > $out/temp/$pat.seq.all.tsv
 
 		# exon3 OPN1LW sense based on two regions with changes in haplotypes
 		grep -P "GTGAGATTTGATGCCAAGCTGGCCATC|TGCAAGCCCTTTGGCAA" $out/temp/$pat.seq.all.tsv > $out/temp/$pat.seq.hap-fwd.tsv
@@ -223,7 +260,7 @@ do
 		# grep sequence that are long enough on both sides, first left and then right
 		grep -P "GTGGCTGGTGGT|ATGGATGGTGGT|GTGGATGGTGGT|ATGGCTGGTGGT" $out/temp/$pat.seq.hap-all.tsv | grep -P "CTTCTCCTGGATCTGGT|CTTCTCCTGGGTCTGGT|CTTCTCCTGGGTCTGGG|CTTCTCCTGGATCTGGG" > $out/temp/$pat.sequences.tsv
 		# R script for sequence alignement and haplotype calling
-		Rscript $script/sequence-analysis.R $out/temp/$pat.sequences.tsv $out/05_haplotypes/$pat.haplotypes.tsv $out/05_haplotypes/$pat.haplotypesDNA.tsv
+		$Rscript $script/sequence-analysis.R $out/temp/$pat.sequences.tsv $out/05_haplotypes/$pat.haplotypes.tsv $out/05_haplotypes/$pat.haplotypesDNA.tsv
 		# remove temporary files
 		rm $out/temp/$pat.seq.hap*
 	fi
@@ -262,11 +299,11 @@ do
 		grep GAAACTGCATCTTGCAGCTTT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1-exon6-part1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 		grep AGGTCTCATCTGTGTCCTCGG $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" '{print "OPN1-exon6-part2" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
-		samtools view $out/01_bam/$pat.bam "chrX:106869654-106896256" | wc -l | awk -F"\t" '{print "Control-chrX-PRPS1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		samtools view $out/01_bam/$pat.bam "chr1:150291917-150327704" | wc -l | awk -F"\t" '{print "Control-autosome-PRPF3" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		$samtools view $out/01_bam/$pat.bam "chrX:106869654-106896256" | wc -l | awk -F"\t" '{print "Control-chrX-PRPS1" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		$samtools view $out/01_bam/$pat.bam "chr1:150291917-150327704" | wc -l | awk -F"\t" '{print "Control-autosome-PRPF3" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
-		samtools view $out/01_bam/$pat.bam "chrX:153404000-153408000" | wc -l | awk -F"\t" '{print "LCR" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
-		samtools view $out/01_bam/$pat.bam "chrX:143653980-143658741" | wc -l | awk -F"\t" '{print "LCR-control" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		$samtools view $out/01_bam/$pat.bam "chrX:153404000-153408000" | wc -l | awk -F"\t" '{print "LCR" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
+		$samtools view $out/01_bam/$pat.bam "chrX:143653980-143658741" | wc -l | awk -F"\t" '{print "LCR-control" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
 	fi
 
@@ -281,21 +318,20 @@ do
 	if [ ! -f $out/03_variants/$pat.variants.tsv ]
 	then
 		# take reads from BAM (OPN1 region) and create FASTQs
-		samtools view -b -h $out/01_bam/$pat.bam "chrX:153390252-153510581" > $out/temp/$pat.region.bam
-		samtools index $out/temp/$pat.region.bam
-		samtools sort $out/temp/$pat.region.bam > $out/temp/$pat.region.sorted.bam
-		samtools index $out/temp/$pat.region.sorted.bam
-		bedtools bamtofastq -i $out/temp/$pat.region.sorted.bam -fq $out/temp/$pat.region.fastq
+		$samtools view -b -h $out/01_bam/$pat.bam "chrX:153390252-153510581" > $out/temp/$pat.region.bam
+		$samtools index $out/temp/$pat.region.bam
+		$samtools sort $out/temp/$pat.region.bam > $out/temp/$pat.region.sorted.bam
+		$samtools index $out/temp/$pat.region.sorted.bam
+		$bedtools bamtofastq -i $out/temp/$pat.region.sorted.bam -fq $out/temp/$pat.region.fastq
 
 		# alignement, sam to bam and indexing
-		export PATH="$PATH:/usr/local/bin/bwa-0.7.15"
 		RG=$(echo "@RG\tID:$pat\tSM:$pat\tPL:Illumina")
-		bwa mem -M -C -t 32 -R $RG $ref2 $out/temp/$pat.region.fastq > $out/temp/$pat.region.sam 2>> $out/07_logs/BWA-region.txt
-		java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.region.sam -O $out/temp/$pat.region2.bam -TMP_DIR $out/temp 2>> $out/07_logs/picard-region.txt
-		samtools index $out/temp/$pat.region2.bam
+		$bwa mem -M -C -t 32 -R $RG $ref2 $out/temp/$pat.region.fastq > $out/temp/$pat.region.sam 2>> $out/07_logs/BWA-region.txt
+		$java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.region.sam -O $out/temp/$pat.region2.bam -TMP_DIR $out/temp 2>> $out/07_logs/picard-region.txt
+		$samtools index $out/temp/$pat.region2.bam
 
 		# variant calling
-		java -jar $gatk HaplotypeCaller \
+		$java -jar $gatk HaplotypeCaller \
 		-I $out/temp/$pat.region2.bam \
 		-R $ref2 \
 		-O $out/temp/$pat.vcf \
@@ -304,7 +340,7 @@ do
 		-L $script/data/hg19_ncbiRefSeq.variants.bed 2>> $out/07_logs/HaplotypeCaller.txt
 
 		# VCF processing
-		bcftools norm -m -both --fasta-ref $ref2 -o $out/02_vcf/$pat.norm.vcf $out/temp/$pat.vcf 2>> $out/07_logs/bcftools.txt
+		$bcftools norm -m -both --fasta-ref $ref2 -o $out/02_vcf/$pat.norm.vcf $out/temp/$pat.vcf 2>> $out/07_logs/bcftools.txt
 		grep -P "chrX\t" $out/02_vcf/$pat.norm.vcf | awk -F"\t" -v pat="$pat" '{split($10,a,":"); split(a[2],b,","); print pat "\t" $1 "\t" $2 "\t" $4 "\t" $5 "\t" b[1] "\t" b[2] "\t" $1 "-" $2 "-" $4 "-" $5}' > $out/03_variants/$pat.variants.tsv
 		rm -rf $out/temp/$pat.*
 
@@ -346,9 +382,7 @@ sort -k1,1 $out/temp/data.tsv > $out/temp/data2.tsv
 cat $out/temp/header.tsv $out/temp/data2.tsv > $out/04_coverage/0.coverage-ALL.tsv
 
 echo "Step 5: Creating plots and events files"
-Rscript $script/plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.PROT.all.tsv $out/05_haplotypes/0.PROT.pathogenic.tsv $out/03_variants/0.variants-all.tsv $script/data/HGVS-gnomAD.RData $out
+$Rscript $script/plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.PROT.all.tsv $out/05_haplotypes/0.PROT.pathogenic.tsv $out/03_variants/0.variants-all.tsv $script/data/HGVS-gnomAD.RData $out
 
 rm -rf $out/temp
-
-
 

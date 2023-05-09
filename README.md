@@ -24,9 +24,9 @@ This tool is made to be run by batch of samples ideally sequenced in the same ba
 The main script 01_opsins-main.sh takes as input a tsv file with 2 or 3 columns: ID, forward FASTQ file and reverse FASTQ file (for paired-end). From these FASTQ files, Opsin-Miner will determine possible deletions, detect pathogenic haplotypes and coding variants.
 It is called with bash:
 ```
-bash 01_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --picard picard.jar --gatk gatk.jar
+bash 01_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --config config.txt
 ```
-The approximate computation time per sample is few minutes per sample.
+The approximate computation time per sample is few minutes per sample depending on the size of FASTQ files.
 
 #### Required arguments
 Option  | Value  | Description 
@@ -54,19 +54,38 @@ The other output files are placed into multiple directories:
 
 ## Determination of phenotype
 
-Phenotype is defined as “Blue cone monochromacy / severe” if there is one event:
+Phenotype is defined as “BCM-severe” if there is:
 + Pathogenic haplotype in more of 75% of reads
-+ Deletion of one or more exon of all genes (OPN1LW+OPN1MW+OPN1MW2)
-+ p.Cys230Arg or LoF variant in more of 75% of reads
++ Known pathogenic or LoF variant in more of 75% of reads
++ Deletion of one or more exon of every genes (OPN1LW+OPN1MW+OPN1MW2)
++ Deletion of LCR (Locus Control Region)
++ Two events associated with "Color blindness"
 
-Phenotype is defined as “Color blindness” if there is one event:
+Phenotype is defined as “Color blindness / BCM-severe” if there is:
 + Pathogenic haplotype in 40-75% of reads
-+ Deletion of one or more exon in OPN1LW or OPN1MW+MW2
-+ p.Cys230Arg or LoF variant in 40-75% of reads
++ Known pathogenic or LoF variant in 40-75% of reads
 
-Phenotype is defined as “Color blindness / severe” if there are two events like:
-+ Pathogenic haplotype in 40-75% of reads
+Phenotype is defined as “Color blindness” if there is:
 + Deletion of one or more exon in OPN1LW or OPN1MW+MW2
-+ p.Cys230Arg or LoF variant in 40-75% of reads
-In this last case, it is impossible to know if the two events are in the same gene or not. Therefore, we cannot differentiate between colour blindness and severe.
+
+Phenotype is defined as “Normal / Color blindness” if there is:
++ Pathogenic haplotype in 10-40% of reads
++ Known pathogenic or LoF variant in 10-40% of reads
+
+Phenotype is defined as “with VUS” if there is:
++ A rare variant (gnomAD-AF<0.01%) which is not know to be pathogenic
+
+List of pathogenic variants relative to OPN1LW (excluding LoF):
++ NP_064445.2:p.(Asn94Lys)
++ NP_064445.2:p.(Trp177Arg)
++ NP_064445.2:p.(Cys203Arg)
++ NP_064445.2:p.(Arg330Gln)
++ NP_064445.2:p.(Gly338Glu)
+
+
+List of abreviations used:
++ BCM: Blue Cone Monochromacy
++ AF: Allele Frequency
++ VUS: Variant of Uncertain Significance
++ LoF: Loff-of-function
 

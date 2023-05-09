@@ -1,3 +1,6 @@
+
+## PLEASE MODIFY BEFORE USAGE ##
+
 samtools	/usr/bin/samtools
 bcftools	/usr/bin/bcftools
 bedtools	/usr/bin/bedtools

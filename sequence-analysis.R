@@ -115,8 +115,8 @@ for (i in 1:dim(a)[1]){
 }
 haplotypeDNA=res[which(res!="NA")]
 
+# rs949430 rs713 rs731614 rs148267962 rs5986963 rs5986964 rs149897670 rs145009674 rs949431
+# R151R L153M V155V N161N V171M V171V A174V I178V S180A
+
 write.table(table(haplotype),file=file2,quote=F,row.names=F,sep="\t")
 write.table(table(haplotypeDNA),file=file3,quote=F,row.names=F,sep="\t")
-
-
-

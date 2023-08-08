@@ -379,6 +379,7 @@ for (i in 1:dim(data3)[2]){
 	score3=0
 	score4=0
 	score5=0
+	score6=0
 
 	n=length(LW)-1
 
@@ -479,6 +480,9 @@ for (i in 1:dim(data3)[2]){
 			if(mut>1 & mut/(WT+mut)>0.75 & (grepl("p.\\(Cys203Arg\\)",NS[j,11])==T | grepl("p.\\(Asn94Lys\\)",NS[j,11])==T | grepl("p.\\(Arg330Gln\\)",NS[j,11])==T | grepl("p.\\(Gly338Glu\\)",NS[j,11])==T | grepl("p.\\(Trp177Arg\\)",NS[j,11])==T | grepl("Met1\\?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("\\+1G",NS[j,10])==T | grepl("\\+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score1=score1+1
 				pathoV=1
+			}
+			if(mut>1 & grepl("p.\\(Trp177Arg\\)",NS[j,11])==T){
+				score6=score6+1
 			}
 			if(mut>1 & mut/(WT+mut)>0.4 & mut/(WT+mut)<=0.75 & (grepl("p.\\(Cys203Arg\\)",NS[j,11])==T | grepl("p.\\(Asn94Lys\\)",NS[j,11])==T | grepl("p.\\(Arg330Gln\\)",NS[j,11])==T | grepl("p.\\(Gly338Glu\\)",NS[j,11])==T | grepl("p.\\(Trp177Arg\\)",NS[j,11])==T | grepl("Met1\\?",NS[j,11])==T  | grepl("Ter",NS[j,11])==T | grepl("\\+1G",NS[j,10])==T | grepl("\\+2T",NS[j,10])==T | grepl("-1G",NS[j,10])==T| grepl("-2A",NS[j,11])==T)){
 				score2=score2+1
@@ -1007,6 +1011,7 @@ for (i in 1:dim(data3)[2]){
 	}
 	#text(0,0,"# LCR is not covered by WES and can have high variability.",cex=0.7,adj=0)
 
+	# score6 Trp177Arg
 	# score5 dels L or M
 	# score4 = rare VUS
 	# score3 = events below 40% (0.5 each)
@@ -1032,6 +1037,8 @@ for (i in 1:dim(data3)[2]){
 	if(score5>=1.5 & score1>=1){pheno="BCM suggested (VUS)"}
 	if(score5>=1.5 & score4>=0.75){pheno="Color vision deficiency or BCM (VUS)"}
 	if(score1>=1 & score4>=0.1){pheno="BCM suggested (VUS)"}
+
+	if(score6>=1){pheno="Cone dystrophy suggested"}
 
 	phenotype=rbind(phenotype,c(colnames(data3)[i],sex[i],score1+score2/2,pheno,nLW-1,nMW-1,CH))
 

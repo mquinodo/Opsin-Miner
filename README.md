@@ -30,7 +30,7 @@ bash 01_opsins-main.sh --script script_folder --out output_folder --input input_
 The approximate computation time per sample is few minutes per sample depending on the size of FASTQ files.
 
 #### Required arguments
-Option  | Value  | Description 
+Option | Value  | Description 
 --- | --- | ---
 --script | STRING | Folder where the scripts are (e.g. XYZ/Opsin-Miner-main)
 --out | STRING | Folder for outputs
@@ -39,7 +39,7 @@ Option  | Value  | Description
 
 #### Optional argument
 Option  | Description 
---- | --- | ---
+--- | ---
 --maleonly | To be added if only males are analyzed (to avoid failing of sex identification).
 
 ## Outputs

@@ -1,7 +1,7 @@
 # Opsin-Miner
 Tool to find coding variants, deletions and pathogenic haplotypes in OPN1LW, OPN1MW and OPN1MW2 using exome sequencing data
 
-This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from the IOB in Basel, Switzerland.
+This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from the IOB in Basel, Switzerland in collaboration with Dr. Susanne Kohl and Prof. Bernd Wissinger from University of Tübingen, Germany.
 
 It was developped on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
 
@@ -37,11 +37,17 @@ Option  | Value  | Description
 --input | STRING | Tab-delimited text file with 2 or 3 columns: ID, forward FASTQ file and eventually reverse FASTQ file
 --config | STRING | config text file containging path to executables
 
+#### Optional argument
+Option  | Description 
+--- | --- | ---
+--maleonly | To be added if only males are analyzed (to avoid failing of sex identification).
+
 ## Outputs
 The main output files which contain all required information are:
 + 0.events.tsv: list of detected events which can be rare or pathogenic variants, pathogenic haplotypes or deletions.
 + 0.phenotypes-all.tsv: inferred phenotype per sample based on detected event(s) as defined in “Determination of phenotype”.
 + 0.sex.tsv: inferred sex and Z-score of chrX coverage vs autosome (high = female, low = male)
++ 0.copy-number.tsv: number of copies of OPN1LW, OPN1MW and hybrid genes
 
 The other output files are placed into multiple directories:
 + 00_raw-sequences: contains the selected sequences for each sample in FASTQ format
@@ -50,31 +56,34 @@ The other output files are placed into multiple directories:
 + 03_variants: list of variants with information about reads for each sample and overall
 + 04_coverage: coverage for all regions for each sample and overall
 + 05_haplotypes: detected haplotypes (DNA and protein) for each sample and overall
-+ 06_plots: plots sumarizing information for each sample as well as Z-score for sex determination
-+ 07_logs: logs of BWA, GATK and picard commands used
++ 06_copy-number: dnumber of copies detected and plots with probability for each state
++ 07_plots: plots sumarizing information for each sample as well as Z-score for sex determination
++ 08_logs: logs of BWA, GATK and picard commands used
 
 ## Determination of phenotype
 
-Phenotype is defined as “BCM-severe” if there is:
+Phenotype is defined as “BCM” if there is:
 + Pathogenic haplotype in more of 75% of reads
 + Known pathogenic or LoF variant in more of 75% of reads
-+ Deletion of one or more exon of every genes (OPN1LW+OPN1MW+OPN1MW2)
 + Deletion of LCR (Locus Control Region)
-+ Two events associated with "Color blindness"
 
-Phenotype is defined as “Color blindness / BCM-severe” if there is:
-+ Pathogenic haplotype in 40-75% of reads
-+ Known pathogenic or LoF variant in 40-75% of reads
+Phenotype is defined as “Color vision defiency or BCM“ if there is:
++ Deletions in LW and MW genes, a hybrid gene and a VUS in more of 75% of reads
 
-Phenotype is defined as “Color blindness” if there is:
-+ Deletion of one or more exon in OPN1LW or OPN1MW+MW2
+Phenotype is defined as “Color vision defiency suggested” if there is:
++ Deletions in LW and MW genes and a hybrid gene without futher events
++ Deletions in LW and MW genes without futher events
++ Deletions in LW or MW genes
 
-Phenotype is defined as “Normal / Color blindness” if there is:
-+ Pathogenic haplotype in 10-40% of reads
-+ Known pathogenic or LoF variant in 10-40% of reads
+Phenotype is defined as “Inconclusive” if there is:
++ Pathogenic haplotype in less than 75% of reads
++ Known pathogenic or LoF variant in less than 75% of reads
 
-Phenotype is defined as “with VUS” if there is:
-+ A rare variant (gnomAD-AF<0.01%) which is not know to be pathogenic
+Phenotype is defined as “Normal / Color vision deficency possible” if there is:
++ A rare variant (VUS) which is not know to be pathogenic in more than 10% of reads
+
+Phenotype is defined as “Normal with VUS” if there is:
++ A rare variant (VUS) which is not know to be pathogenic in less than 10% of reads
 
 List of pathogenic variants relative to OPN1LW (excluding LoF):
 + NP_064445.2:p.(Asn94Lys)

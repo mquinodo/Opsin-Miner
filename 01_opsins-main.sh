@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage() { echo "## ERROR: Usage: $0 [--script <string>] [--out <string>] [--input <string>] [--config <string>]. Exit." 1>&2; exit 1; }
+usage() { echo "## ERROR: Usage: $0 [--script <string>] [--out <string>] [--input <string>] [--config <string>] [--malesonly]. Exit." 1>&2; exit 1; }
 
 while getopts ":-:" o; do
     case "${o}" in
@@ -17,6 +17,9 @@ while getopts ":-:" o; do
                     ;;
                 config)
                     config="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+                    ;;
+               	malesonly)
+                    malesonly="Yes"
                     ;;
 				*)
             		usage
@@ -45,6 +48,11 @@ fi
 if [ ! -f "$config" ]; then
   echo "Config file does not exist!"
   exit 1
+fi
+
+if [ -z "${malesonly}" ]; then
+    echo " -> Analysis will be made assume all samples are males."
+    malesonly="No"
 fi
 
 samtools=$(grep "^samtools" "$config" | cut -f2)
@@ -131,8 +139,9 @@ mkdir -p $out/02_vcf
 mkdir -p $out/03_variants
 mkdir -p $out/04_coverage
 mkdir -p $out/05_haplotypes
-mkdir -p $out/06_plots
-mkdir -p $out/07_logs
+mkdir -p $out/06_copy-number
+mkdir -p $out/07_plots
+mkdir -p $out/08_logs
 mkdir -p $out/temp
 
 if [ ! -f $script/data/hg19.p13.plusMT.no_alt_analysis_set.fa ]
@@ -153,41 +162,27 @@ then
 fi
 
 ref1=$script/data/hg19.p13.plusMT.no_alt_analysis_set.fa
-ref2=$script/data/chrX.masked-both.fa
+ref2=$script/data/chrX.masked-MW2.fa
+
 
 if [ ! -f $ref2 ]
 then
-	echo "Step 0.3: Creating chrX reference with masked OPN1MW, OPN1MW2 and polymorphisms in OPN1LW (will be done only once)"
+	echo "Step 0.3: Creating chrX reference with masked OPN1MW2 and polymorphism (will be done only once)"
 	# extract chrX
 	$samtools faidx $ref1 chrX > $script/data/chrX.fa
 
 	# mask region with OPN1MW and OPN1MW2
-	$bedtools maskfasta -fi $script/data/chrX.fa -bed $script/data/OPN1MWMW2.bed -fo $script/data/chrX.temp.fa
+	$bedtools maskfasta -fi $script/data/chrX.fa -bed $script/data/OPN1MW2.bed -fo $script/data/chrX.temp.fa
 
-	# remplace differences by Ns in OPN1LW in exon 3 (9 positions) and same for differenc ein other exons
-	sed 's/CATTTCCTGGGAGAGGTGGCTGGTGGTGTGCAAGCCCTTTGGCAATGTGAGATTTGATGC/CATTTCCTGGGAGAGNTGGNTGGTGGTNTGCAAGCCCTTTGGCAANGTGAGATTTGATGC/g' $script/data/chrX.temp.fa > $script/data/chrX.temp1.fa
-	sed 's/CAAGCTGGCCATCGTGGGCATTGCCTTCTCCTGGATCTGGTCTGCTGTGTGGACAGCCCC/CAAGCTGGCCATCNTNGGCATTGNCTTCTCCTGGNTCTGGNCTGCTGTGTGGACAGCCCC/g' $script/data/chrX.temp1.fa > $script/data/chrX.temp2.fa
-	# exon1
-	sed 's/AGGCCAGTATAAAGCGCCGTGACCCTCAGGTGATGCGCCAGGGCCGGCTGCCGTCGGGGA/NGGCCNGTATAAAGCNCCGTGACCCTCAGGTGANGCNCCAGGGCCGGCTGCCGTCGGGGA/g' $script/data/chrX.temp2.fa > $script/data/chrX.temp3.fa
-	# exon4
-	sed 's/GTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCATCCCACTCGCTATCATCATGCT/GTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCANCCCACTCNNNATCATCNTGCT/g' $script/data/chrX.temp3.fa > $script/data/chrX.temp4.fa
-	# exon5
-	sed 's/CCAGAAGGCAGAGAAGGAAGTGACGCGCATGGTGGTGGTGATGATCTTTGCGTACTGCGT/CCAGAAGGCAGAGAAGGAAGTGACGCGCATGGTGGTGGTGATGNTCNTNGCNTNCTGCNT/g' $script/data/chrX.temp4.fa > $script/data/chrX.temp5.fa
-	sed 's/CTGCTGGGGACCCTACACCTTCTTCGCATGCTTTGCTGCTGCCAACCCTGGTTACGCCTT/CTGCTGGGGACCNTACNCCTTCTTCGCATGCTTTGCTGCTGCCAACCCTGGNTACNCCTT/g' $script/data/chrX.temp5.fa > $script/data/chrX.temp6.fa
-	sed 's/CCACCCTTTGATGGCTGCCCTGCCGGCCTACTTTGCCAAAAGTGCCACTATCTACAACCC/CCACCCTTTGATGGCTGCCCTGCCGGCCTNCTTTGCCAAAAGTGCCACTATCTACAACCC/g' $script/data/chrX.temp6.fa > $script/data/chrX.temp7.fa
-	# exon2
-	sed 's/CCAGATGGGTGTACCACCTCACCAGTGTCTGGATGATCTTTGTGGTCACTGCATCCGTCT/CCAGATGGGTGTACCACCTCACCAGTGTCTGGATGATCTTTGTGGTCANTGCATCCGTCT/g' $script/data/chrX.temp7.fa > $script/data/chrX.temp8.fa
-	sed 's/ACTGGATCCTGGTGAACCTGGCGGTCGCTGACCTAGCAGAGACCGTCATCGCCAGCACTA/ACTGGATCCTGGTGAACCTGGCGGTCGCTGACCTNGCAGAGACCGTCATCGCCAGCACTA/g' $script/data/chrX.temp8.fa > $script/data/chrX.temp9.fa
-	sed 's/TCAGCATTGTGAACCAGGTCTCTGGCTACTTCGTGCTGGGCCACCCTATGTGTGTCCTGG/TCAGCNTTGTGAACCAGGTCTNTGGCTACTTCGTGCTGGGCCACCCTATGTGTGTCCTGG/g' $script/data/chrX.temp9.fa > $script/data/chrX.temp10.fa
-	sed 's/AGGGCTACACCGTCTCCCTGTGTGGTAAGCCAGTCGGGGCCCAGGCTCGGCGGAAACCAC/AGGGCTACACCGTCTCCCTGTGTGGTAAGCCAGTCGGGGCCCAGGCTCNGCGGAAACCAC/g' $script/data/chrX.temp10.fa > $script/data/chrX.temp11.fa
-	sed 's/TCATTCACCCTGCAAGCTCCTCCAGCCACCTCATGATGATCGGGGCCCAGCTGCTCCTGT/TCATTCACCCTGCAAGCNCCTCCNGCNACCTCATGATGATCGGGGCCCAGCTGCTCCTGT/g' $script/data/chrX.temp11.fa > $script/data/chrX.masked-both.fa
+	# remplace difference in exon 5
+	sed 's/CCATACGCCTTCTTCGCATGCTTTGCTGCTGCCAACCCTGGCTACCCCTTCCACCCTTTG/CCNTACGCCTTCTTCGCATGCTTTGCTGCTGCCAACCCTGGCTACCCCTTCCACCCTTTG/g' $script/data/chrX.temp.fa > $script/data/chrX.masked-MW2.fa
 
 	# remove temp files
 	rm $script/data/chrX.temp* $script/data/chrX.fa
 	# indexes for the chrX modified reference
-	$samtools faidx $script/data/chrX.masked-both.fa
-	$bwa index $script/data/chrX.masked-both.fa 2>> $out/07_logs/BWA-index-genome.txt
-	$java -jar $picard CreateSequenceDictionary -R $script/data/chrX.masked-both.fa -O $script/data/chrX.masked-both.dict >> $out/07_logs/picard-dictionary.txt 2>&1
+	$samtools faidx $script/data/chrX.masked-MW2.fa
+	$bwa index $script/data/chrX.masked-MW2.fa 2>> $out/08_logs/BWA-index-genome.txt
+	$java -jar $picard CreateSequenceDictionary -R $script/data/chrX.masked-MW2.fa -O $script/data/chrX.masked-MW2.dict >> $out/08_logs/picard-dictionary.txt 2>&1
 fi
 
 
@@ -240,8 +235,8 @@ do
 	then
 		# recreate BAM file: align selected reads and then convert SAM to BAM
 		RG=$(echo "@RG\tID:$pat\tSM:$pat\tPL:Illumina")
-		$bwa mem -M -C -t 32 -R $RG $ref1 $out/00_raw-sequences/$pat.sel.fastq.gz > $out/temp/$pat.sam 2>> $out/07_logs/BWA-genome.txt
-		$java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.sam -O $out/01_bam/$pat.bam -TMP_DIR $out/temp >> $out/07_logs/picard-genome.txt 2>&1
+		$bwa mem -M -C -t 32 -R $RG $ref1 $out/00_raw-sequences/$pat.sel.fastq.gz > $out/temp/$pat.sam 2>> $out/08_logs/BWA-genome.txt
+		$java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.sam -O $out/01_bam/$pat.bam -TMP_DIR $out/temp >> $out/08_logs/picard-genome.txt 2>&1
 		$samtools index $out/01_bam/$pat.bam
 		rm $out/temp/$pat.sam
 	fi
@@ -306,6 +301,23 @@ do
 		$samtools view $out/01_bam/$pat.bam "chrX:143653980-143658741" | wc -l | awk -F"\t" '{print "LCR-control" "\t" $1}' >> $out/04_coverage/$pat.coverage.tsv
 
 	fi
+	if [ ! -f $out/04_coverage/$pat.coverage.mut.tsv ]
+	then
+		$samtools view $out/01_bam/$pat.bam "chrX:153390252-153510581" | cut -f10 > $out/temp/$pat.seq.all.tsv
+		cat $out/temp/$pat.seq.all.tsv | tr ACGTacgt TGCAtgca | rev > $out/temp/$pat.seq.all-rev.tsv
+		cat $out/temp/$pat.seq.all.tsv $out/temp/$pat.seq.all-rev.tsv > $out/temp/$pat.seq.all-both.tsv
+		# mutations
+		grep CGCGGCCCAGACGTGTTCAGCGGCAGCTCGTACCCCGGGGTGCAGTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCAT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "C203R-LW" "\t" $1}' > $out/04_coverage/$pat.coverage.mut.tsv
+		grep CGCGGCCCAGACGTGTTCAGCGGCAGCTCGTACCCCGGGGTGCAGTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCAC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "C203R-MW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+		grep TGCGGCCCAGACGTGTTCAGCGGCAGCTCGTACCCCGGGGTGCAGTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCAT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "C203-LW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+		grep TGCGGCCCAGACGTGTTCAGCGGCAGCTCGTACCCCGGGGTGCAGTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCAC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "C203-MW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+		grep ATGTTCAGCGGCAGCTCGTACCCCGGGGTGCAGTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCAT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "V207M-LW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+		grep ATGTTCAGCGGCAGCTCGTACCCCGGGGTGCAGTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCAC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "V207M-MW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+		grep GTGTTCAGCGGCAGCTCGTACCCCGGGGTGCAGTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCAT $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "V207-LW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+		grep GTGTTCAGCGGCAGCTCGTACCCCGGGGTGCAGTCTTACATGATTGTCCTCATGGTCACCTGCTGCATCAC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "V207-MW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+		#grep ATGGTCATCTGCTGCATCATCCCACTC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "T226I-LW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+		#grep ATGGTCATCTGCTGCATCACCCCACTC $out/temp/$pat.seq.all-both.tsv | wc -l | awk -F"\t" -v pat="$pat" '{print pat "\t" "T226I-MW" "\t" $1}' >> $out/04_coverage/$pat.coverage.mut.tsv
+	fi
 
 	rm -f $out/temp/$pat.*
 	
@@ -326,8 +338,8 @@ do
 
 		# alignement, sam to bam and indexing
 		RG=$(echo "@RG\tID:$pat\tSM:$pat\tPL:Illumina")
-		$bwa mem -M -C -t 32 -R $RG $ref2 $out/temp/$pat.region.fastq > $out/temp/$pat.region.sam 2>> $out/07_logs/BWA-region.txt
-		$java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.region.sam -O $out/temp/$pat.region2.bam -TMP_DIR $out/temp 2>> $out/07_logs/picard-region.txt
+		$bwa mem -M -C -t 32 -R $RG $ref2 $out/temp/$pat.region.fastq > $out/temp/$pat.region.sam 2>> $out/08_logs/BWA-region.txt
+		$java -jar $picard SortSam -VALIDATION_STRINGENCY SILENT -SORT_ORDER coordinate -I $out/temp/$pat.region.sam -O $out/temp/$pat.region2.bam -TMP_DIR $out/temp 2>> $out/08_logs/picard-region.txt
 		$samtools index $out/temp/$pat.region2.bam
 
 		# variant calling
@@ -337,10 +349,10 @@ do
 		-O $out/temp/$pat.vcf \
 		-G StandardAnnotation \
 		-G StandardHCAnnotation \
-		-L $script/data/hg19_ncbiRefSeq.variants.bed 2>> $out/07_logs/HaplotypeCaller.txt
+		-L $script/data/hg19_ncbiRefSeq-exons.LW-MW.bed 2>> $out/08_logs/HaplotypeCaller.txt
 
 		# VCF processing
-		$bcftools norm -m -both --fasta-ref $ref2 -o $out/02_vcf/$pat.norm.vcf $out/temp/$pat.vcf 2>> $out/07_logs/bcftools.txt
+		$bcftools norm -m -both --fasta-ref $ref2 -o $out/02_vcf/$pat.norm.vcf $out/temp/$pat.vcf 2>> $out/08_logs/bcftools.txt
 		grep -P "chrX\t" $out/02_vcf/$pat.norm.vcf | awk -F"\t" -v pat="$pat" '{split($10,a,":"); split(a[2],b,","); print pat "\t" $1 "\t" $2 "\t" $4 "\t" $5 "\t" b[1] "\t" b[2] "\t" $1 "-" $2 "-" $4 "-" $5}' > $out/03_variants/$pat.variants.tsv
 		rm -rf $out/temp/$pat.*
 
@@ -352,7 +364,8 @@ echo "Step 4: Batch processing"
 
 # merge variants in one file
 echo -e "ID\tchr\tpos\tref\talt\treads-ref\treads-alt\tchange" > $out/03_variants/0.variants-all.tsv
-cat $out/03_variants/*.variants.tsv >> $out/03_variants/0.variants-all.tsv
+cat $out/03_variants/*.variants.tsv | grep -v -P "chrX-153418468-G-C|chrX-153418524-C-T|chrX-153418535-A-G|chrX-153418541-T-G|chrX-153453580-G-A|chrX-153455654-C-T|chrX-153455665-A-G|chrX-153455671-G-T|chrX-153418514-G-A|chrX-153418516-G-T|chrX-153420176-A-G|chrX-153421912-T-C|chrX-153455598-C-G|chrX-153455644-G-A|chrX-153455646-G-T" >> $out/03_variants/0.variants-all.tsv
+cat $out/04_coverage/*.coverage.mut.tsv > $out/04_coverage/0.coverage.mut.ALL.tsv
 
 # extract pathogenic and rare haplotypes
 grep -P "A|I|V|S" $out/05_haplotypes/*.haplotypes.tsv | awk -F"\t" '{split($1,a,":"); n=split(a[1],b,"/"); split(b[n],c,"."); print c[1] "\t" a[2] "\t" $2}' > $out/05_haplotypes/0.PROT.all.tsv
@@ -382,7 +395,9 @@ sort -k1,1 $out/temp/data.tsv > $out/temp/data2.tsv
 cat $out/temp/header.tsv $out/temp/data2.tsv > $out/04_coverage/0.coverage-ALL.tsv
 
 echo "Step 5: Creating plots and events files"
-$Rscript $script/plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.PROT.all.tsv $out/05_haplotypes/0.PROT.pathogenic.tsv $out/03_variants/0.variants-all.tsv $script/data/HGVS-gnomAD.RData $out
+$Rscript $script/analysis_plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.PROT.all.tsv $out/05_haplotypes/0.PROT.pathogenic.tsv $out/05_haplotypes/0.DNA.all.tsv $out/03_variants/0.variants-all.tsv $script/data/HGVS-gnomAD.RData $out $out/04_coverage/0.coverage.mut.ALL.tsv $malesonly
 
 rm -rf $out/temp
 
+# rs949430 rs713 rs731614 rs148267962 rs5986963 rs5986964 rs149897670 rs145009674 rs949431
+# R151R L153M V155V N161N V171M V171V A174V I178V S180A

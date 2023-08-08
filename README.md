@@ -40,7 +40,7 @@ Option | Value  | Description
 #### Optional argument
 Option  | Description 
 --- | ---
---maleonly | To be added if only males are analyzed (to avoid failing of sex identification).
+--malesonly | To be added if only males are analyzed (to avoid failing of sex identification).
 
 ## Outputs
 The main output files which contain all required information are:

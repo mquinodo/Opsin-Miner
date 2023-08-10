@@ -960,7 +960,7 @@ for (i in 1:dim(data3)[2]){
 				pathoV=1
 			}
 			if(pathoV==0){	
-				text(0,xl,paste("Rare variant (VUS, hg19)*:",sep=""),adj=0,cex=1,col="orange")
+				text(0,xl,paste("Rare variant (AF<1E-5, VUS, hg19)*:",sep=""),adj=0,cex=1,col="orange")
 				text(0,xl-0.3,paste(t1,", ",mut,"/",WT+mut," reads (",round(100*mut/(WT+mut),digits=1),"%) ","\n",t2,sep=""),adj=c(0,1),cex=0.8,col="orange")
 				#text(0,xl-1.2,"* relative to OPN1LW gene but could affect other genes",adj=0,cex=0.6,col=1)
 				if(NS[j,10]=="NM_020061.5:c.619G>A" | NS[j,10]=="NM_000513.2:c.619G>A"){
@@ -1056,10 +1056,10 @@ for (i in 1:dim(data3)[2]){
 		text(5,-1,paste("Low quality, results not reliable!",sep=""),col="red",cex=1.2, xpd=NA)
 	}
 	if(sex[i]=="Female"){
-		text(0,-0.35,paste("Warning: Hybrid gene prediction and copy-numbers in females is not fully reliable.",sep=""),adj=0,col="red",cex=0.7, xpd=NA)
+		text(0,-0.55,paste("Warning: Hybrid gene prediction and copy-numbers in females is not fully reliable.",sep=""),adj=0,col="red",cex=0.7, xpd=NA)
 	}
 	if(sex[i]=="Undetermined"){
-		text(0,-0.35,paste("Warning: Sex could not be predicted. Results can be unreliable.",sep=""),col="red",cex=0.7, xpd=NA,adj=0)
+		text(0,-0.55,paste("Warning: Sex could not be predicted. Results can be unreliable.",sep=""),col="red",cex=0.7, xpd=NA,adj=0)
 	}
 
 

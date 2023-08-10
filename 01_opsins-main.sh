@@ -364,7 +364,11 @@ echo "Step 4: Batch processing"
 
 # merge variants in one file
 echo -e "ID\tchr\tpos\tref\talt\treads-ref\treads-alt\tchange" > $out/03_variants/0.variants-all.tsv
-cat $out/03_variants/*.variants.tsv | grep -v -P "chrX-153418468-G-C|chrX-153418524-C-T|chrX-153418535-A-G|chrX-153418541-T-G|chrX-153453580-G-A|chrX-153455654-C-T|chrX-153455665-A-G|chrX-153455671-G-T|chrX-153418514-G-A|chrX-153418516-G-T|chrX-153420176-A-G|chrX-153421912-T-C|chrX-153455598-C-G|chrX-153455644-G-A|chrX-153455646-G-T" >> $out/03_variants/0.variants-all.tsv
+cat $out/03_variants/*.variants.tsv >> $out/03_variants/0.variants-all.tsv
+
+echo -e "ID\tchr\tpos\tref\talt\treads-ref\treads-alt\tchange" > $out/03_variants/0.variants-rare.tsv
+cat $out/03_variants/*.variants.tsv | grep -v -Ff $script/data/gnomAD-frequent.tsv >> $out/03_variants/0.variants-rare.tsv
+
 cat $out/04_coverage/*.coverage.mut.tsv > $out/04_coverage/0.coverage.mut.ALL.tsv
 
 # extract pathogenic and rare haplotypes
@@ -395,7 +399,7 @@ sort -k1,1 $out/temp/data.tsv > $out/temp/data2.tsv
 cat $out/temp/header.tsv $out/temp/data2.tsv > $out/04_coverage/0.coverage-ALL.tsv
 
 echo "Step 5: Creating plots and events files"
-$Rscript $script/analysis_plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.PROT.all.tsv $out/05_haplotypes/0.PROT.pathogenic.tsv $out/05_haplotypes/0.DNA.all.tsv $out/03_variants/0.variants-all.tsv $script/data/HGVS-gnomAD.RData $out $out/04_coverage/0.coverage.mut.ALL.tsv $malesonly
+$Rscript $script/analysis_plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.PROT.all.tsv $out/05_haplotypes/0.PROT.pathogenic.tsv $out/05_haplotypes/0.DNA.all.tsv $out/03_variants/0.variants-rare.tsv $script/data/HGVS-gnomAD.RData $out $out/04_coverage/0.coverage.mut.ALL.tsv $malesonly
 
 rm -rf $out/temp
 

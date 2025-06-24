@@ -35,8 +35,8 @@ Option | Value  | Description
 --out | STRING | Folder for outputs
 --input | STRING | Tab-delimited text file with 2 or 3 columns: ID, BAM/CRAM file or forward FASTQ file and eventually reverse FASTQ file
 --config | STRING | Configuration text file containing path to executables
---fastq
---bam-cram
+--fastq | STRING | To be used for the analysis FASTQ files (use either --fastq or --bam-cram)
+--bam-cram | STRING | To be used for the analysis BAM or CRAM files (use either --fastq or --bam-cram)
 
 #### Optional important arguments
 Option | Value  | Description 

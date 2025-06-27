@@ -70,42 +70,10 @@ The other output files are placed into multiple directories:
 + 07_plots: plots summarizing information for each sample
 + 08_logs: logs of bcftools, BWA, GATK and picard commands used
 
-## Determination of phenotype
-
-Phenotype is defined as “BCM” if there is:
-+ Pathogenic haplotype in more of 75% of reads
-+ Known pathogenic or LoF variant in more of 75% of reads
-+ Deletion of LCR (Locus Control Region)
-
-Phenotype is defined as “Color vision defiency or BCM“ if there is:
-+ Deletions in LW and MW genes, a hybrid gene and a VUS in more of 75% of reads
-
-Phenotype is defined as “Color vision defiency suggested” if there is:
-+ Deletions in LW and MW genes and a hybrid gene without futher events
-+ Deletions in LW and MW genes without futher events
-+ Deletions in LW or MW genes
-
-Phenotype is defined as “Inconclusive” if there is:
-+ Pathogenic haplotype in less than 75% of reads
-+ Known pathogenic or LoF variant in less than 75% of reads
-
-Phenotype is defined as “Normal / Color vision deficency possible” if there is:
-+ A rare variant (VUS) which is not know to be pathogenic in more than 10% of reads
-
-Phenotype is defined as “Normal with VUS” if there is:
-+ A rare variant (VUS) which is not know to be pathogenic in less than 10% of reads
-
-List of pathogenic variants relative to OPN1LW (excluding LoF):
-+ NP_064445.2:p.(Asn94Lys)
-+ NP_064445.2:p.(Trp177Arg)
-+ NP_064445.2:p.(Cys203Arg)
-+ NP_064445.2:p.(Arg330Gln)
-+ NP_064445.2:p.(Gly338Glu)
-
-
 List of abreviations used:
 + BCM: Blue Cone Monochromacy
++ CVD: Color Vision Deficiency
 + AF: Allele Frequency
 + VUS: Variant of Uncertain Significance
-+ LoF: Loff-of-function
++ LoF: Loss-of-function
 

@@ -1,7 +1,7 @@
 # Opsin-Miner
-Opsin-Miner is a bioinformatic tool that is used to analyze genotype at the opsin locus on the X chromosome (OPN1LW and OPN1MW). It identifies the number of gene copies, small variants, deletions, hybrid genes, and haplotypes and can be used with data from exome or genome sequencing.
+Opsin-Miner is a bioinformatic tool that is used to analyze genotype at the OPN1LW/OPN1MW genes (red and green opsin) locus on the X chromosome. It identifies the number of gene copies, deletions, small variants, deletions, hybrid genes, and haplotypes and can be used with data from short-read targeted, exome, or genome sequencing.
 
-This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from the IOB in Basel, Switzerland in collaboration with Dr. Susanne Kohl and Prof. Bernd Wissinger from the University of Tübingen, Germany.
+This software was written by Mathieu Quinodoz in the group of Prof. Rivolta from the IOB in Basel, Switzerland in collaboration with Dr. Susanne Kohl and Prof. Bernd Wissinger from the University of Tübingen, Germany and mutliple other partners.
 
 It was developed on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
 
@@ -43,16 +43,16 @@ Option | Value  | Description
 --- | --- | ---
 --malesonly | NA | To be added if only males are analyzed (to avoid failure of sex identification).
 --hg38 | NA | To be used if BAM/CRAM files are used and mapped to hg38 (and not hg19)
---WGS | NA | To be used with data from genome sequencing (as opposed to exome)
+--WGS | NA | To be used with data from genome sequencing (as opposed to exome or targeted sequencing)
 --noCHR | NA | To be used if BAM/CRAM files have a chromosome notation without "chr" ("1" instead of "chr1")
 
 #### Optional arguments
 Option | Value  | Description 
 --- | --- | ---
---smallLCR | NA | To be used with exome sequencing data if the LCR is captured to detect smaller deletions.
---sexfile | STRING | Text files with sex provided if known with certainty for all samples
---normauto | STRING | If chromosome 1 cannot be used for normalization, a gene name on an autosome to be used.
---normX | STRING | If chromosome X cannot be used for normalization, a gene name on chromosome X to be used.
+--smallLCR | NA | To be used with exome or targeted sequencing data if the LCR is captured, in order to detect smaller deletions.
+--sexfile | STRING | Text files with sex provided if known with certainty for all samples (tab-delimited with ID and Male/Female).
+--normauto | STRING | If chromosome 1 cannot be used for normalization, a gene name on an autosome to be used (not recommended).
+--normX | STRING | If chromosome X cannot be used for normalization, a gene name on chromosome X to be used (not recommended).
 
 ## Outputs
 The main output files which contain all required information are:
@@ -61,7 +61,7 @@ The main output files which contain all required information are:
 
 The other output files are placed into multiple directories:
 + 00_raw-sequences: contains the selected sequences for each sample in FASTQ format
-+ 01_bam: contains the realigned selected sequences for each sample in BAM format with indexes (hg19). The OPN1LWMW BAM is aligned on the modified reference with masked OPN1MW2.
++ 01_bam: contains the realigned selected sequences for each sample in BAM format with indexes (hg19). The OPN1LWMW BAM is aligned on the modified hg19 reference with masked OPN1MW2.
 + 02_vcf: detected variants in VCF format for each sample
 + 03_variants: list of variants with information about reads for each sample and overall
 + 04_coverage: coverage for all regions for each sample and overall as well as Z-score for sex determination
@@ -72,6 +72,7 @@ The other output files are placed into multiple directories:
 
 List of abreviations used:
 + BCM: Blue Cone Monochromacy
++ BED: Bornholm Eye Disease
 + CVD: Color Vision Deficiency
 + AF: Allele Frequency
 + VUS: Variant of Uncertain Significance

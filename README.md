@@ -16,7 +16,7 @@ It was developed on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
 + GATK jar file [[Link](https://github.com/broadinstitute/gatk/releases)] (>= v4.0.0.0, check compatibility with the version of Java here: [[LINK](https://gatk.broadinstitute.org/hc/en-us/articles/360035532332-Java-version-issues)])
 
 ## Installation
-The tool does not require compilation. It will download reference files during the first run.
+The tool does not require compilation. It will download and process reference files during the first run with a duration of ~15 minutes.
 
 ## Usage
 This tool is made to be run by batch of samples ideally sequenced in the same batch or at least with the same capture kit and sequencer. For optimal results, we recommend analyzing at least 10 individuals, either all males (--malesonly option) or a balanced cohort including at least three males and three females.

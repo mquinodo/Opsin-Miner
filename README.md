@@ -78,3 +78,4 @@ List of abreviations used:
 + VUS: Variant of Uncertain Significance
 + LoF: Loss-of-function
 
+Pathogenic haplotypes are defined as those resulting in less than 30% correct exon 3 splicing, based on experimental data reported by Neitz et al. (PMID: 35741704).

@@ -734,8 +734,8 @@ echo -e "ID\tHaplotype\tReads\tTotal\tPerc" > $out/05_haplotypes/0.exon3.DNA.all
 grep -v "Haplotype" $out/05_haplotypes/*.haplotypesDNA.exon3.tsv | awk -F"\t" '{split($1,a,":"); n=split(a[1],b,"/"); split(b[n],c,"."); print c[1] "\t" a[2] "\t" $2 "\t" $3 "\t" $4}' >> $out/05_haplotypes/0.exon3.DNA.all.tsv
 
 # extract pathogenic haplotypes based on splicing assay
-awk -F'\t' -v OFS='\t' 'NR==FNR {map[$2] = $1; next }{ print $0, ( $2 in map ? map[$2] : "Haplotype" )}' $script/haplo_exon3_splicing.tsv $out/05_haplotypes/0.exon3.DNA.all.tsv > $out/05_haplotypes/temp.exon3.tsv
-awk -F"\t" '{if($3>=0.70 && $3<2) print $2}' $script/haplo_exon3_splicing.tsv > $out/05_haplotypes/temp.spli.tsv
+awk -F'\t' -v OFS='\t' 'NR==FNR {map[$2] = $1; next }{ print $0, ( $2 in map ? map[$2] : "Haplotype" )}' $script/data/haplo_exon3_splicing.tsv $out/05_haplotypes/0.exon3.DNA.all.tsv > $out/05_haplotypes/temp.exon3.tsv
+awk -F"\t" '{if($3>=0.70 && $3<2) print $2}' $script/data/haplo_exon3_splicing.tsv > $out/05_haplotypes/temp.spli.tsv
 echo -e "Haplotype" >> $out/05_haplotypes/temp.spli.tsv
 echo -e "ID\tHaplotypeDNA\tHaplotype\tReads\tTotal\tPerc" > $out/05_haplotypes/0.exon3.pathogenic.tsv
 grep -Ff $out/05_haplotypes/temp.spli.tsv $out/05_haplotypes/temp.exon3.tsv | awk -F"\t" '{print $1 "\t" $2 "\t" $6 "\t" $3 "\t" $4 "\t" $5}' | grep -v "Haplotype" >> $out/05_haplotypes/0.exon3.pathogenic.tsv

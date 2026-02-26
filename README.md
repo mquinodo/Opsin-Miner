@@ -26,7 +26,7 @@ It is called with bash:
 ```
 bash 01_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --config config.txt
 ```
-The approximate computation time per sample is few seconds per sample for BAM/CRAM files and few minutes for FASTQ files.
+The approximate computation time per sample is ~1 minute per sample for BAM/CRAM files and few minutes for FASTQ files.
 
 #### Required arguments
 Option | Value  | Description 

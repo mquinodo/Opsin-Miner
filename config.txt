@@ -1,11 +1,11 @@
 
-## PLEASE MODIFY BEFORE USAGE ##
+## PLEASE MODIFY BEFORE USAGE ## tab-delimited
 
-samtools	/usr/bin/samtools
-bcftools	/usr/bin/bcftools
-bedtools	/usr/bin/bedtools
-Rscript	/usr/bin/Rscript
-bwa	/usr/bin/bwa
-java	/usr/bin/java
-picard	/usr/local/bin/picard.jar
-gatk	/usr/local/bin/gatk-4.1.4.1/gatk-package-4.1.4.1-local.jar
+samtools  /usr/bin/samtools
+bcftools  /usr/bin/bcftools
+bedtools  /usr/bin/bedtools
+Rscript  /usr/bin/Rscript
+bwa  /usr/bin/bwa
+java  /usr/bin/java
+picard  /usr/local/bin/picard.jar
+gatk  /usr/local/bin/gatk-4.1.4.1/gatk-package-4.1.4.1-local.jar

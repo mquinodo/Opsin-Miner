@@ -21,7 +21,8 @@ The tool does not require compilation. It will download and process reference fi
 ## Usage
 This tool is made to be run by batch of samples ideally sequenced in the same batch or at least with the same capture kit and sequencer. For optimal results, we recommend analyzing at least 10 individuals, either all males (--malesonly option) or a balanced cohort including at least three males and three females.
 
-The main script 01_opsins-main.sh takes as input a tsv file with 2 or 3 columns: ID, BAM/CRAM file or forward FASTQ file, and reverse FASTQ file (for paired-end). 
+The main script 01_opsins-main.sh takes as input a tsv file with 2 or 3 columns: ID, BAM/CRAM file or forward FASTQ file, and reverse FASTQ file (for paired-end).
+For BAM/CRAM files, the indices are needed.
 It is called with bash:
 ```
 bash 01_opsins-main.sh --script script_folder --out output_folder --input input_file.tsv --config config.txt

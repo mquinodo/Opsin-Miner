@@ -2,8 +2,6 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 
-library(png)
-
 file1=args[1]
 file2=args[2]
 file3=args[3]
@@ -14,8 +12,7 @@ dir=args[7]
 file8=args[8]
 file9=args[9]
 malesonly=args[10]
-logo<-readPNG(args[11])
-sexfile=args[12]
+sexfile=args[11]
 
 load(file6)
 
@@ -673,7 +670,6 @@ for (i in 1:dim(data3)[2]){
 	par(mfrow=c(1,2),mar=c(2, 4, 4, 2) + 0.1)
 	plot(1,xlim=c(0,10),ylim=c(0,9.5),xaxt ="n",yaxt ="n",xlab="",ylab="",cex=0,main=paste("Summary for ",colnames(ALL2)[i],sep=""),cex.main=1.5)
 	par(xpd=NA)
-	rasterImage(logo,9,10,14,11.5)
 	par(xpd=FALSE)
 	text(0,9.3,"Graphical representation and inferred copy-numbers:",cex=1,adj=0)
 	m=8.2

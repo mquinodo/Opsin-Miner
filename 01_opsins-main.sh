@@ -781,7 +781,7 @@ sort -k1,1 $out/temp/data.tsv > $out/temp/data2.tsv
 cat $out/temp/header.tsv $out/temp/data2.tsv > $out/04_coverage/0.coverage-ALL.tsv
 
 echo "Step 6: Creating plots and events files"
-$Rscript $script/analysis_plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.exon3.PROT.all.tsv $out/05_haplotypes/0.exon3.pathogenic.tsv $out/05_haplotypes/0.exon3.DNA.all.tsv $out/03_variants/0.variants-rare.tsv $script/data/HGVS-gnomAD.RData $out $out/04_coverage/0.coverage.mut.ALL.tsv $out/03_variants/0.variants-all.tsv $malesonly $script/data/Opsin-logo.png $sexfile
+$Rscript $script/analysis_plots.R $out/04_coverage/0.coverage-ALL.tsv $out/05_haplotypes/0.exon3.PROT.all.tsv $out/05_haplotypes/0.exon3.pathogenic.tsv $out/05_haplotypes/0.exon3.DNA.all.tsv $out/03_variants/0.variants-rare.tsv $script/data/HGVS-gnomAD.RData $out $out/04_coverage/0.coverage.mut.ALL.tsv $out/03_variants/0.variants-all.tsv $malesonly $sexfile
 
 rm -rf $out/temp $out/03_variants/0.variants-rare.tsv $out/03_variants/0.variants-all.tsv
 

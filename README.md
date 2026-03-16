@@ -9,7 +9,7 @@ It was developed on Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-131-generic x86_64).
 + SAMtools [[Link](http://www.htslib.org/download/)] (>= v1.10)
 + BCFTools [[Link](https://samtools.github.io/bcftools/howtos/install.html)] (>= v1.9)
 + BEDTools [[Link](https://bedtools.readthedocs.io/en/latest/content/installation.html)] (>= v2.25.0)
-+ Rscript [[Link](https://cran.r-project.org/mirrors.html)] (>= v3.2.0)
++ Rscript [[Link](https://cran.r-project.org/mirrors.html)] (>= v3.2.0) with no specific packages
 + BWA [[Link](https://sourceforge.net/projects/bio-bwa/files)] (>=0.7.17)
 + Java (in order to run Picard and GATK)
 + Picard jar file [[Link](https://github.com/broadinstitute/picard)] (>= v2.23)

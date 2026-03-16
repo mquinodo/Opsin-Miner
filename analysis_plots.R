@@ -668,7 +668,7 @@ for (i in 1:dim(data3)[2]){
 	# starting PDF and first plot
 	pdf(file=paste(dir,"/07_plots/",rownames(ALL)[i],"_OPN1LW-MW_analysis.pdf",sep=""),height=7,width=14)
 	par(mfrow=c(1,2),mar=c(2, 4, 4, 2) + 0.1)
-	plot(1,xlim=c(0,10),ylim=c(0,9.5),xaxt ="n",yaxt ="n",xlab="",ylab="",cex=0,main=paste("Summary for ",colnames(ALL2)[i],sep=""),cex.main=1.5)
+	plot(1,xlim=c(0,10),ylim=c(0,9.5),xaxt ="n",yaxt ="n",xlab="",ylab="",cex=0,main=paste("Opsin-Miner for ",colnames(ALL2)[i],sep=""),cex.main=1.5)
 	par(xpd=NA)
 	par(xpd=FALSE)
 	text(0,9.3,"Graphical representation and inferred copy-numbers:",cex=1,adj=0)

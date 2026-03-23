@@ -758,6 +758,7 @@ for (i in 1:dim(data3)[2]){
 			colo2[which(colo2=="grey")]="x"
 			colo3=paste(colo2,collapse="")
 			events=rbind(events,c(colnames(data3)[i],sex[i],"Hybrid gene","High",colo3,"NA","NA","NA","NA"))
+			coloname=colo3
 		}
 	}
 	# same if there is no full MW gene, at least one full LW and the precence of hybrid is possible
@@ -787,6 +788,7 @@ for (i in 1:dim(data3)[2]){
 			colo2[which(colo2=="grey")]="x"
 			colo3=paste(colo2,collapse="")
 			events=rbind(events,c(colnames(data3)[i],sex[i],"Hybrid gene","High",colo3,"NA","NA","NA","NA"))
+			coloname=colo3
 		}
 	}
 	# same if hybrid is possible but there are no full LW nor MW
@@ -808,6 +810,7 @@ for (i in 1:dim(data3)[2]){
 		colo2[which(colo2=="grey")]="x"
 		colo3=paste(colo2,collapse="")
 		events=rbind(events,c(colnames(data3)[i],sex[i],"Hybrid gene","High",colo3,"NA","NA","NA","NA"))
+		coloname=colo3
 	}
 
 	# computing if additional hybrids could exist
@@ -974,7 +977,7 @@ for (i in 1:dim(data3)[2]){
 		x1=2
 		x2=4
 		x3=4.5
-		text(x1+(x3-x1)/2,m+0.5,"Hybrid gene",cex=0.8)
+		text(x1+(x3-x1)/2,m+0.5,paste("Hybrid gene (",coloname,")",sep=""),cex=0.8)
 		if(CH>1){
 			text(x1+(x3-x1)/2,m-0.5,paste(CH," copies",sep=""),cex=0.8)
 		}
@@ -1022,7 +1025,7 @@ for (i in 1:dim(data3)[2]){
 		x1=6
 		x2=8
 		x3=8.5
-		text(x1+(x3-x1)/2,m+0.5,"Hybrid gene",cex=0.8)
+		text(x1+(x3-x1)/2,m+0.5,paste("Hybrid gene (",coloname,")",sep=""),cex=0.8)
 		if(CH>1){
 			text(x1+(x3-x1)/2,m-0.5,paste(CH," copies",sep=""),cex=0.8)
 		}
@@ -1396,3 +1399,4 @@ if(dim(events)[1]>0){
 }
 write.table(events,file=paste(dir,"/0.events.tsv",sep=""),quote=F,row.names=F,sep="\t")
 write.table(phenotype[,c(1,2,4,5,6,7,8)],file=paste(dir,"/0.phenotypes.tsv",sep=""),quote=F,row.names=F,sep="\t")
+
